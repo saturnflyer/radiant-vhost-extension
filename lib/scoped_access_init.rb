@@ -29,6 +29,16 @@ require 'dispatcher'
     app = respond_to?(:prepare_application, true) ? (class << self; self end) : self
     app.class_eval do
       private
+
+      # Added to get 'prepare_application' error to go away
+      def prepare_application
+         new(STDOUT).reload_application
+      end
+
+      def reset_application
+         new(STDOUT).cleanup_application
+      end
+
       def prepare_application_with_reset
         ScopedAccess.reset
         prepare_application_without_reset
