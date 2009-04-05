@@ -2,7 +2,6 @@ require_dependency 'application'
 require File.join(File.dirname(__FILE__), 'lib/scoped_access_init')
 require File.join(File.dirname(__FILE__), 'vendor/scoped_access/lib/scoped_access')
 
-
 class VhostExtension < Radiant::Extension
   version "2.0"
   description "Host multiple sites on a single instance."
@@ -42,7 +41,7 @@ class VhostExtension < Radiant::Extension
     
     ApplicationHelper.send :include, Ext::ApplicationHelper
     Admin::AbstractModelController.send :include, Ext::Admin::AbstractModelController
-    Admin::PageController.send :include, Ext::Admin::PageController
+    Admin::PagesController.send :include, Ext::Admin::PagesController
   end
   
   def deactivate

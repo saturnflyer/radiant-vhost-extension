@@ -1,18 +1,8 @@
-class Admin::SiteController < Admin::AbstractModelController
-  model_class Site
-  
-  only_allow_access_to :index, :new, :edit, :remove, 
+class Admin::SiteController < Admin::ResourceController
+  only_allow_access_to :index, :show, :new, :create, :edit, :update, :remove, :destroy,
     :when => :admin,
-    :denied_url => {:controller => 'page', :action => :index},
+    :denied_url => { :controller => 'pages', :action => 'index' },
     :denied_message => 'You must have administrative privileges to perform this action.'
-  
-  def new
-    @site = Site.new
-    if handle_new_or_edit_post
-      render :template => "admin/site/edit"
-    else
-      @site.save
-    end
-  end
-  
+
+  before_filter :ensure_deletable, :only => [:remove, :destroy]
 end

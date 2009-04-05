@@ -1,5 +1,5 @@
 module Ext
-  module Admin::PageController
+  module Admin::PagesController
     def self.included(receiver)
       receiver.send :alias_method_chain, :clear_model_cache, :site_specificity
     end
