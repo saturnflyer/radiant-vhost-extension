@@ -25,6 +25,10 @@ class VhostExtension < Radiant::Extension
     admin.site = load_default_site_regions
 
     ApplicationController.send :include, SiteScope
+    Page.send :include, Vhost::PageExtensions
+    Snippet.send :include, Vhost::SnippetExtensions
+    Layout.send :include, Vhost::LayoutExtensions
+    
     SITE_SPECIFIC_MODELS.each do |model|
       ApplicationController.send :around_filter, ScopedAccess::Filter.new(model.constantize, :site_scope)
       model.constantize.send :cattr_accessor, :current_site
@@ -37,11 +41,9 @@ class VhostExtension < Radiant::Extension
     SiteController.send :remove_method, :show_page
     SiteController.send :include, CacheByDomain
     
-    require_dependency 'redo_validations'
-    
-    ApplicationHelper.send :include, Ext::ApplicationHelper
-    Admin::AbstractModelController.send :include, Ext::Admin::AbstractModelController
-    Admin::PagesController.send :include, Ext::Admin::PagesController
+    ApplicationHelper.send :include, Vhost::ApplicationHelper
+    Admin::AbstractModelController.send :include, Vhost::Admin::AbstractModelController
+    Admin::PagesController.send :include, Vhost::Admin::PagesController
   end
   
   def deactivate

@@ -1,4 +1,4 @@
-module Ext
+module Vhost
   module Admin::AbstractModelController
     def self.included(receiver)
       receiver.send :before_filter, :ensure_user_has_site_access

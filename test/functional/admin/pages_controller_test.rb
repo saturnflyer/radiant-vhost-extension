@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-require 'admin/page_controller'
+require 'admin/pages_controller'
 
 # Re-raise errors caught by the controller.
 class Admin::PagesController; def rescue_action(e) raise e end; end
 
 class Admin::PagesControllerTest < Test::Unit::TestCase
   fixtures :users, :pages, :sites, :sites_users
-  test_helper :pages, :page_parts, :caching
+  test_helper :pages, :page_parts
   
   def setup
     @controller = Admin::PagesController.new

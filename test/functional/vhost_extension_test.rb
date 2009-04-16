@@ -18,7 +18,7 @@ class VhostExtensionTest < Test::Unit::TestCase
   end
     
   def test_initialization
-    assert_equal File.join(File.expand_path(RAILS_ROOT), 'vendor', 'extensions', '000_vhost'), VhostExtension.root
+    assert_equal File.join(File.expand_path(RAILS_ROOT), 'vendor', 'extensions', 'vhost'), VhostExtension.root
     assert_equal 'Vhost', VhostExtension.extension_name
   end  
   

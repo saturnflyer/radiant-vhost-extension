@@ -1,4 +1,4 @@
-module Ext
+module Vhost
   module ApplicationHelper
     
     def self.included(receiver)
