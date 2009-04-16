@@ -61,7 +61,7 @@ class Admin::PagesControllerTest < Test::Unit::TestCase
         '2' => part_params(:name => 'test-part-2')
       }
     )
-    assert_redirected_to page_index_url
+    assert_redirected_to '/admin/pages'
     
     @page = get_test_page
     assert_kind_of Page, @page
@@ -116,7 +116,7 @@ class Admin::PagesControllerTest < Test::Unit::TestCase
   def test_remove__post
     @page = create_test_page(:site_id => sites(:two).id)
     post :remove, :id => @page.id
-    assert_redirected_to page_index_url
+    assert_redirected_to '/admin/pages'
     assert_match /removed/, flash[:notice]
     assert_nil get_test_page
   end

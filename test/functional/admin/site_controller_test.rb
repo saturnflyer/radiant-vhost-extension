@@ -39,7 +39,7 @@ class SiteControllerTest < Test::Unit::TestCase
 
     define_method "test_#{action}_action_not_allowed_if_other" do
       get action, { :id => 1 }, { 'user' => users(:non_admin) }
-      assert_redirected_to page_index_url, "action: #{action}"
+      assert_redirected_to '/admin/login', "action: #{action}"
       assert_match /privileges/, flash[:error], "action: #{action}"
     end
   end
