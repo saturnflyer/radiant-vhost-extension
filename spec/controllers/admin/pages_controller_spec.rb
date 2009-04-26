@@ -9,7 +9,7 @@ describe Admin::PagesController do
     login_as :user_a
   end
 
-  describe "creating sites" do
+  describe "creating pages" do
     integrate_views
 
     it "should be associated with the site corresponding to the current hostname" do
@@ -20,6 +20,7 @@ describe Admin::PagesController do
       page.save.should_not be false
       page.site.hostname.should == VhostExtension.HOST 
     end
+    
   end
 
   describe "permissions" do
