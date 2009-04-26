@@ -13,14 +13,14 @@
 <% for site in @sites -%>
     <tr class="node level-1">
       <td class="site">
-        <%= link_to site.hostname, site_edit_url(:id => site) %>
+        <%= link_to site.hostname, edit_admin_site_url(:id => site) %>
       </td>
       <td class="users">
         <%=
         site.users.collect(&:name).join(', ')
         %>
       </td>
-      <td class="remove"><%= link_to(image('remove', :alt => 'Remove Site'), site_remove_url(:id => site)) %></td>
+      <td class="remove"><%= link_to(image('remove', :alt => 'Remove Site'), remove_admin_site_url(:id => site)) %></td>
     </tr>
 <% end -%>
 <% else -%>
@@ -36,4 +36,4 @@
 // ]]>
 </script>
 
-<p><%= link_to 'New Site', site_new_url %></p>
+<p><%= link_to 'New Site', new_admin_site_url %></p>

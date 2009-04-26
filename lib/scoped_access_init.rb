@@ -11,19 +11,6 @@ ActionController::Base.instance_eval do
 end
 
 require 'dispatcher'
-# if ActionController.const_defined?(:Dispatcher)
-#   # Rails2.1
-#   ActionController::Dispatcher.class_eval do
-#     class << self
-#       def define_dispatcher_callbacks_with_reset(cache_classes)
-#         define_dispatcher_callbacks_without_reset(cache_classes)
-#         ScopedAccess.reset
-#       end
-#       alias_method_chain :define_dispatcher_callbacks, :reset
-#    end
-#   end
-# 
-# else
   # Rails1.2 or Rails2.0
   class ::Dispatcher
     app = respond_to?(:prepare_application, true) ? (class << self; self end) : self

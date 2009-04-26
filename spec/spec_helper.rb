@@ -18,6 +18,9 @@ if File.directory?(File.dirname(__FILE__) + "/matchers")
   Dir[File.dirname(__FILE__) + "/matchers/*.rb"].each {|file| require file }
 end
 
+Dataset::Resolver.default << (File.dirname(__FILE__) + "/datasets")
+  
+
 Spec::Runner.configure do |config|
   # config.use_transactional_fixtures = true
   # config.use_instantiated_fixtures  = false
@@ -30,7 +33,7 @@ Spec::Runner.configure do |config|
   # Alternatively, if you prefer to declare them only once, you can
   # do so here, like so ...
   #
-  #   config.global_fixtures = :table_a, :table_b
+  # config.global_fixtures = :page_parts, :pages, :sites_users, :sites, :users
   #
   # If you declare global fixtures, be aware that they will be declared
   # for all of your examples, even those that don't use them.
