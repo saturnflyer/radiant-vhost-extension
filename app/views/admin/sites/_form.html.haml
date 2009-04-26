@@ -1,0 +1,19 @@
+- form_for [:admin, @site] do |f|
+  = render_region :form_top
+  .form-area
+    - render_region :form do |form|
+      - form.edit_hostname do
+        %p.hostname
+          %label{:for=>"site_hostname"} Hostname
+          = f.text_field "hostname", :class => 'textbox', :maxlength => 100
+      - form.edit_users do
+        %p.users
+          %label{:for=>"site_users"} Users
+          = f.collection_select :user_ids, User.find(:all), :id, :name, {}, :multiple => true, :name => 'site[user_ids][]', :size => '10'
+  - render_region :form_bottom do |form_bottom|
+    - form_bottom.edit_buttons do
+      %p.buttons
+        = save_model_button(@site)
+        = save_model_and_continue_editing_button(@site)
+        or
+        = link_to 'Cancel', admin_sites_url
