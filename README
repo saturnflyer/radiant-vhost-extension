@@ -11,5 +11,32 @@ own users, pages, snippets and layouts (soon to be supporting other extensions).
 Administer users and sites from any domain using your administrative accounts 
 and manage website content by logging into each domain.
 
-TO DOCUMENT
-* Bootstrapping
+INSTRUCTIONS
+Currently (April 26th, 2009) you need the freshest version of Radiant (0.7.1) 
+which includes Rails 2.2.2 to run vhost. The following instructions use git
+to directly check out the latest version of Radiant so you may need to adjust
+them slightly. Once the Radiant gem supports Rails 2.2.2 these instructions
+will reflect the proper way to run and install vhost.
+
+* Run 'git clone git://github.com/radiant/radiant.git yoursite'
+* In /yoursite run:
+  * git submodule init
+  * git submodule update
+* Create production, development and test database schemas
+* Update /yoursite/config/database.yml to point to the schemas
+* In /yoursite/vendor/extensions run:
+  * git clone git://github.com/kalebwalton/radiant-vhost-extension.git vhost
+* In /yoursite/vendor/extensions/vhost run:
+  * git submodule init
+  * git submodule update
+* In /yoursite run:
+  * rake development db:bootstrap
+  * rake db:test:clone_structure (this one may be unnecessary)
+  * rake db:test:clone
+* Finally, in /yoursite run:
+  * rake spec:extensions EXT=vhost
+
+You should see a number of spec examples running and passing. If you don't, 
+or they're failing, something has gone wrong!
+
+
