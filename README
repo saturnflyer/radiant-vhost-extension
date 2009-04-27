@@ -1,3 +1,8 @@
+Host multiple separate websites on the same Radiant installation each with their 
+own users, pages, snippets and layouts (soon to be supporting other extensions).  
+Administer users and sites from any domain using your administrative accounts 
+and manage website content by logging into each domain.
+
 IMPORTANT NOTES ABOUT VHOST
 - Not compatible with the multi_site extension
 - Uses the scoped_access plugin, make sure none of your extensions have a 
@@ -5,11 +10,6 @@ IMPORTANT NOTES ABOUT VHOST
 - Hooks into the Radiant 'bootstrap' functionality and currently overwrites the
   standard templates with a modified version of the Simple Blog (i.e. no Styled
   Blog or Coffee template)
-
-Host multiple separate websites on the same Radiant installation each with their 
-own users, pages, snippets and layouts (soon to be supporting other extensions).  
-Administer users and sites from any domain using your administrative accounts 
-and manage website content by logging into each domain.
 
 INSTRUCTIONS
 Currently (April 26th, 2009) you need the freshest version of Radiant (0.7.1) 
