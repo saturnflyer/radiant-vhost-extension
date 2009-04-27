@@ -54,7 +54,9 @@ namespace :db do
       
       # Migrate extensions downward
       Radiant::Extension.descendants.each do |ext|
-        ext.migrator.migrate(0)
+        # The first time you bootstrap you'll always encounter exceptions
+        # so be sure to ignore them here.
+        ext.migrator.migrate(0) rescue nil 
       end
       
       # Migrate downward

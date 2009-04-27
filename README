@@ -1,6 +1,15 @@
-*Vhost is not compatible with the multi_site extension*
+IMPORTANT NOTES ABOUT VHOST
+- Not compatible with the multi_site extension
+- Uses the scoped_access plugin, make sure none of your extensions have a 
+  conflicting version of the plugin.
+- Hooks into the Radiant 'bootstrap' functionality and currently overwrites the
+  standard templates with a modified version of the Simple Blog (i.e. no Styled
+  Blog or Coffee template)
 
-Host multiple separate websites on the same Radiant installation each with their own users, pages, snippets and layouts (soon to be supporting other extensions).  Administer users and sites from any domain using your administrative accounts and manage website content by logging into each domain.
+Host multiple separate websites on the same Radiant installation each with their 
+own users, pages, snippets and layouts (soon to be supporting other extensions).  
+Administer users and sites from any domain using your administrative accounts 
+and manage website content by logging into each domain.
 
 TO DOCUMENT
 * Bootstrapping
