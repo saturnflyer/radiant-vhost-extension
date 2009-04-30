@@ -59,6 +59,18 @@ class VhostExtension < Radiant::Extension
     ApplicationHelper.send :include, Vhost::ApplicationHelperExtensions
     Admin::ResourceController.send :include, Vhost::ResourceControllerExtensions
     Admin::PagesController.send :include, Vhost::PagesControllerExtensions
+
+    # SUPPORT FOR OTHER EXTENSIONS
+    # I'm sure there's an easier way to do these checks, doing it the poor way for now.
+    
+    # fckeditor
+    fck = Kernel.const_get("FckeditorController") rescue false
+    if fck
+      FckeditorController.send :remove_method, :current_directory_path
+      FckeditorController.send :remove_method, :upload_directory_path
+      FckeditorController.send :include, Vhost::FckeditorExtensions::Controller
+    end
+    
   end
   
   def deactivate
