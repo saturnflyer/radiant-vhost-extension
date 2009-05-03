@@ -12,6 +12,9 @@ describe Page, "site scope" do
     @page.parent = pages(:parent)
     # Need to manually set the site_id since we're not going through the controller stack
     @page.site_id = site_id(:site_a)
+    @page.valid?
+    @page.save
+    puts "ERRORS: "+@page.errors.length.to_s
     assert_invalid :slug, 'slug already in use for child of parent', 'child', 'child-2', 'child-3'
     assert_valid :slug, 'child-4'
   end

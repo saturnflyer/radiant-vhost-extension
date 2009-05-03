@@ -1,0 +1,21 @@
+models:
+ Layout:
+   name: 
+     message:
+       'name already in use'
+     scope:
+       site_id
+ Page:
+   slug:
+     scope: 
+       - parent_id
+       - site_id
+     message:
+       'slug already in use for child of parent'
+ Snippet:
+   name:
+     message:
+       'name already in use'
+     scope:
+       site_id
+

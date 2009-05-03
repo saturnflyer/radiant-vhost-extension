@@ -27,7 +27,7 @@ module SiteScope
   # Should this really be here? Shouldn't we be calling this regardless of if we go
   # through the ApplicationControllers :before_filter?
   def set_site_scope_in_models
-    VhostExtension::SITE_SPECIFIC_MODELS.each do |model|
+    VhostExtension.MODELS.each do |model|
       model.constantize.current_site = self.current_site
     end
   end

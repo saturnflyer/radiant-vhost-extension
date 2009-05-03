@@ -1,4 +1,5 @@
 # You'll need this if you are going to add regions into your extension interface.
+require 'yaml'
 require 'ostruct'
 require_dependency 'application'
 require File.join(File.dirname(__FILE__), 'lib/scoped_access_init')
@@ -9,14 +10,14 @@ class VhostExtension < Radiant::Extension
   description "Host multiple sites on a single instance."
   url "http://github.com/jgarber/radiant-vhost-extension"
 
-  # This will be set during tests and used to simulate having a populated request.host
   class << self
-    attr_accessor 'HOST'
+    # Set during tests and used to simulate having a populated request.host
+    attr_accessor :HOST
+    # Sets the models that are scoped down to a site
+    attr_accessor :MODELS
+    attr_accessor :MODEL_UNIQUENESS_VALIDATIONS
   end
 
-  # This constant sets the models that are scoped down to a site
-  SITE_SPECIFIC_MODELS = %w(Layout Page Snippet)
-  
   # These routes are added to the radiant routes file and works just like any rails routes.
   define_routes do |map|
     map.namespace :admin, :member => { :remove => :get } do |admin|
@@ -25,6 +26,21 @@ class VhostExtension < Radiant::Extension
   end
   
   def activate
+    process_config
+    basic_extension_config
+    init_scoped_access
+    enable_caching
+    modify_classes
+    extension_support
+  end
+  
+  def deactivate
+    admin.tabs.remove "Sites"
+  end
+  
+  private
+
+  def basic_extension_config
     admin.tabs.add "Sites", "/admin/sites", :after => "Layouts", :visibility => [:admin]
 
     # This adds information to the Radiant interface. In this extension, we're dealing with "site" views
@@ -35,7 +51,23 @@ class VhostExtension < Radiant::Extension
     end
     # initialize regions for help (which we created above)
     admin.sites = load_default_site_regions
+  end
+  
+  def process_config
+    # Enable quick SiteScoping of other Models via vhost.yml config file
+    default_config = YAML.load(ERB.new(File.read(File.dirname(__FILE__) + '/lib/vhost_default_config.yml')).result).symbolize_keys
+    begin
+      custom_config = YAML.load(ERB.new(File.read(RAILS_ROOT + '/config/vhost.yml')).result).symbolize_keys rescue nil
+      default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].nil?
+    rescue
+    end
 
+    # Set the MODELS and MODEL_VALIDATIONS class variables so everything else can access it
+    VhostExtension.MODELS = default_config[:models].collect{|key,val| key.to_s}
+    VhostExtension.MODEL_UNIQUENESS_VALIDATIONS = default_config[:models]
+  end
+  
+  def init_scoped_access
     # Configure the ScopedAccess stuff to scope models to Sites
     # Unfortunately adding the filters to the ApplicationController isn't enough
     # they need to also be added to all of the subclasses (which, surprisingly
@@ -44,29 +76,33 @@ class VhostExtension < Radiant::Extension
     controllers.concat ApplicationController.subclasses
     controllers.each do |controller| controller.constantize.send :include, SiteScope end
   
-    VhostExtension::SITE_SPECIFIC_MODELS.each do |model|
+    VhostExtension.MODELS.each do |model|
       # Instantiate the ScopedAccess filter for each model
       controllers.each do |controller| controller.constantize.send :prepend_around_filter, ScopedAccess::Filter.new(model.constantize, :site_scope) end
       # Enable class level calls like 'Layout.class.current_site' for each model
       model.constantize.send :cattr_accessor, :current_site
+      model.constantize.send :include, Vhost::SiteScopedModelExtensions
     end
     # Enable instance level calls like 'my_layout.current_site' for each model
     controllers.each do |controller| controller.constantize.send :before_filter, :set_site_scope_in_models end
-
+  end
+  
+  def enable_caching
     # Enable caching per site by rewriting the show_page method
     SiteController.send :alias_method, :show_page_orig, :show_page
     SiteController.send :remove_method, :show_page
     SiteController.send :include, CacheByDomain
-
+  end
+  
+  def modify_classes
     # Send all of the Vhost extensions and class modifications 
-    User.send :include, Vhost::UserExtensions
-    Page.send :include, Vhost::PageExtensions
-    Snippet.send :include, Vhost::SnippetExtensions
-    Layout.send :include, Vhost::LayoutExtensions
+    User.send :has_and_belongs_to_many, :sites
     ApplicationHelper.send :include, Vhost::ApplicationHelperExtensions
     Admin::ResourceController.send :include, Vhost::ResourceControllerExtensions
     Admin::PagesController.send :include, Vhost::PagesControllerExtensions
-
+  end
+  
+  def extension_support
     # SUPPORT FOR OTHER EXTENSIONS
     # I'm sure there's an DRYer way to do these checks, doing it the poor way for now.
     
@@ -77,15 +113,8 @@ class VhostExtension < Radiant::Extension
       FckeditorController.send :remove_method, :upload_directory_path
       FckeditorController.send :include, Vhost::FckeditorExtensions::Controller
     end
-    
   end
-  
-  def deactivate
-    admin.tabs.remove "Sites"
-  end
-  
-  private
-  
+
   # Defines this extension's default regions (so that we can incorporate shards
   # into its views).
   def load_default_site_regions
