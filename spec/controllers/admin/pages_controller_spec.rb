@@ -6,19 +6,20 @@ describe Admin::PagesController do
   before :each do
     VhostExtension.HOST = sites(:site_a).hostname # Pretend we're connected to site_a so the SiteScope works right
     rescue_action_in_public!  # ActionController::TestCase no longer considers this request a local request
+
+    # don't bork results with stale cache items
+    controller.cache.clear
     login_as :user_a
   end
 
   describe "creating pages" do
-    integrate_views
-
+    
     it "should be associated with the site corresponding to the current hostname" do
       # Need to call get :new or else the :before_filter in the ApplicationController
       # that sets up the SiteScope doesn't run.
-      get :new
-      page = Page.new(page_params)
-      page.save.should_not be false
-      page.site.hostname.should == VhostExtension.HOST 
+      slug = "should-be-associated-with-site"
+      post :create, :page => page_params(:slug => slug)
+      Page.find_by_slug(slug).site.id.should == site_id(:site_a)
     end
     
   end
@@ -28,7 +29,7 @@ describe Admin::PagesController do
     # @todo it "should allow <various> actions for users that belong to multiple sites" 
     # (or something like that. probably just hook into the block below.)
   
-    [:admin_a, :developer_a].each do |user|
+    [:admin_a, :developer_a, :user_a].each do |user|
       {
         :post => :create,
         :put => :update,
@@ -39,13 +40,23 @@ describe Admin::PagesController do
           send method, action, :id => page_id(:page_a)
           response.should redirect_to('admin/pages')
         end
+      end
+    end
+
+    [:developer_a, :user_a].each do |user|
+      {
+        :post => :create,
+        :put => :update,
+        :delete => :destroy
+      }.each do |method, action|
         it "should show a missing page (404) for the #{action} action on a page NOT belonging to a site #{user.to_s.humanize} has access to" do
+          login_as user
           send method, action, :id => page_id(:page_b)
           response.should be_missing
         end
       end
-
     end
+
   end
 
 

@@ -9,13 +9,12 @@ class VhostExtension < Radiant::Extension
   description "Host multiple sites on a single instance."
   url "http://github.com/jgarber/radiant-vhost-extension"
 
-  # This will be set during tests
+  # This will be set during tests and used to simulate having a populated request.host
   class << self
     attr_accessor 'HOST'
   end
 
   # This constant sets the models that are scoped down to a site
-  # @todo Consider adding 'User' to this, figure out how to make that work.
   SITE_SPECIFIC_MODELS = %w(Layout Page Snippet)
   
   # These routes are added to the radiant routes file and works just like any rails routes.
@@ -29,7 +28,7 @@ class VhostExtension < Radiant::Extension
     admin.tabs.add "Sites", "/admin/sites", :after => "Layouts", :visibility => [:admin]
 
     # This adds information to the Radiant interface. In this extension, we're dealing with "site" views
-    # so :site is an attr_accessor. If you're creating an extension for tracking moons and stars, you might
+    # so :sites is an attr_accessor. If you're creating an extension for tracking moons and stars, you might
     # put attr_accessor :moon, :star
     Radiant::AdminUI.class_eval do
       attr_accessor :sites
@@ -38,15 +37,23 @@ class VhostExtension < Radiant::Extension
     admin.sites = load_default_site_regions
 
     # Configure the ScopedAccess stuff to scope models to Sites
-    ApplicationController.send :include, SiteScope
-    SITE_SPECIFIC_MODELS.each do |model|
-      ApplicationController.send :around_filter, ScopedAccess::Filter.new(model.constantize, :site_scope)
+    # Unfortunately adding the filters to the ApplicationController isn't enough
+    # they need to also be added to all of the subclasses (which, surprisingly
+    # only shows as the Admin::PagesController and Admin::ResourceController)
+    controllers = ['ApplicationController']
+    controllers.concat ApplicationController.subclasses
+    controllers.each do |controller| controller.constantize.send :include, SiteScope end
+  
+    VhostExtension::SITE_SPECIFIC_MODELS.each do |model|
+      # Instantiate the ScopedAccess filter for each model
+      controllers.each do |controller| controller.constantize.send :prepend_around_filter, ScopedAccess::Filter.new(model.constantize, :site_scope) end
+      # Enable class level calls like 'Layout.class.current_site' for each model
       model.constantize.send :cattr_accessor, :current_site
     end
-    ApplicationController.send :before_filter, :set_site_scope_in_models
-    SiteAssociationObserver.instance
-    
-    # What does this do? Not sure yet.
+    # Enable instance level calls like 'my_layout.current_site' for each model
+    controllers.each do |controller| controller.constantize.send :before_filter, :set_site_scope_in_models end
+
+    # Enable caching per site by rewriting the show_page method
     SiteController.send :alias_method, :show_page_orig, :show_page
     SiteController.send :remove_method, :show_page
     SiteController.send :include, CacheByDomain
@@ -61,10 +68,10 @@ class VhostExtension < Radiant::Extension
     Admin::PagesController.send :include, Vhost::PagesControllerExtensions
 
     # SUPPORT FOR OTHER EXTENSIONS
-    # I'm sure there's an easier way to do these checks, doing it the poor way for now.
+    # I'm sure there's an DRYer way to do these checks, doing it the poor way for now.
     
-    # fckeditor
-    fck = Kernel.const_get("FckeditorController") rescue false
+    # FCKeditor
+    fck = Kernel.const_get("FckeditorExtension") rescue false
     if fck
       FckeditorController.send :remove_method, :current_directory_path
       FckeditorController.send :remove_method, :upload_directory_path

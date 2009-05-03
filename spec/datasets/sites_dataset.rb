@@ -2,7 +2,8 @@ class SitesDataset < Dataset::Base
   uses :site_users
   
   def load
-    create_record :site, :site_a, {:hostname => "siteA.host"}
+    # Needs to be test.host so the SiteScope works right
+    create_record :site, :site_a, {:hostname => "test.host"}
     create_record :site, :site_b, {:hostname => "siteB.host"}
   end
 

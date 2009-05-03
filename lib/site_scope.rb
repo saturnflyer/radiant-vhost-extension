@@ -1,7 +1,7 @@
 module SiteScope
   
-  def self.included(receiver)
-    receiver.send :helper_method, :current_site
+  def self.included(base)
+    base.send :helper_method, :current_site
   end
   
   def current_site
@@ -9,7 +9,7 @@ module SiteScope
     # variable (VhostExtension.HOST) in those cases.
     host ||= VhostExtension.HOST || request.host
     @current_site ||=  Site.find_by_hostname(host) || Site.find_by_hostname('*')
-    raise "No site found to match #{request.host}." unless @current_site
+    raise "No site found to match #{host}." unless @current_site
     @current_site
   end
 

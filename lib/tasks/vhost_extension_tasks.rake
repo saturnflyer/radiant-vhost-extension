@@ -11,6 +11,16 @@ namespace :radiant do
           VhostExtension.migrator.migrate
         end
       end
+
+      desc "Bootstraps the necessary database changes for Vhost support, including
+            support for other extensions. Undo these changes by adding DIRECTION=DOWN
+            to your rake command."
+      task :bootstrap => :environment do
+        direction = ENV["DIRECTION"] == "DOWN" ? :down : :up
+
+        # Loop through and migrate each extension support migration
+        
+      end
     
     end
   end

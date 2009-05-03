@@ -10,6 +10,8 @@ describe Page, "site scope" do
 
   it 'should validate uniqueness of' do
     @page.parent = pages(:parent)
+    # Need to manually set the site_id since we're not going through the controller stack
+    @page.site_id = site_id(:site_a)
     assert_invalid :slug, 'slug already in use for child of parent', 'child', 'child-2', 'child-3'
     assert_valid :slug, 'child-4'
   end
