@@ -12,6 +12,10 @@ namespace :radiant do
         end
       end
 
+      
+      # @todo the following method should accept a direction. We should also
+      # rename it something like 'apply_site_scoping' and 'reset_site_scoping' 
+      # or something...
       desc "Initializes site scoping. "
       task :initialize_site_scoping => :environment do
         require "#{File.dirname(__FILE__)}/add_site_columns"
