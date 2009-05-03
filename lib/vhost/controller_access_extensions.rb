@@ -1,4 +1,4 @@
-module Vhost::ResourceControllerExtensions
+module Vhost::ControllerAccessExtensions
   def self.included(receiver)
     receiver.send :before_filter, :ensure_user_has_site_access
   end

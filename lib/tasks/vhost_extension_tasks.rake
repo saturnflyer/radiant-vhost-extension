@@ -12,14 +12,19 @@ namespace :radiant do
         end
       end
 
-      desc "Bootstraps the necessary database changes for Vhost support, including
-            support for other extensions. Undo these changes by adding DIRECTION=DOWN
-            to your rake command."
-      task :bootstrap => :environment do
-        direction = ENV["DIRECTION"] == "DOWN" ? :down : :up
-
-        # Loop through and migrate each extension support migration
-        
+      desc "Initializes site scoping. "
+      task :initialize_site_scoping => :environment do
+        require "#{File.dirname(__FILE__)}/add_site_columns"
+        AddSiteColumns.down
+        AddSiteColumns.up
+      end
+      
+      desc "Reinitializes site scoping in the event a new model needs to be site scoped."
+      task :reinitialize_site_scoping => :environment do
+        require 'highline/import'
+        if agree("This task will destroy any model to site relationships in the database. Are you sure \nyou want to continue? [yn] ")
+          Rake::Task["radiant:extensions:vhost:initialize_site_scoping"].invoke
+        end
       end
     
     end
@@ -53,6 +58,9 @@ namespace :db do
       :admin_password => ENV['ADMIN_PASSWORD'],
       :database_template => ENV['DATABASE_TEMPLATE']
     )
+
+    Rake::Task["radiant:extensions:vhost:initialize_site_scoping"].invoke
+
   end
   
   desc "Migrate schema to version 0 and back up again. WARNING: Destroys all data in tables!!"
@@ -77,6 +85,9 @@ namespace :db do
       
       # Migrate extensions upward
       Radiant::ExtensionMigrator.migrate_extensions
+
+      # Remigrate the extensions to catch any new site scoped extensions added
+      Rake::Task["radiant:extensions:vhost:initialize_site_scoping"].invoke
       
       # Dump the schema
       Rake::Task["db:schema:dump"].invoke

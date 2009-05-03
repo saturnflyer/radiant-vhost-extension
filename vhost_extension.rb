@@ -37,6 +37,21 @@ class VhostExtension < Radiant::Extension
   def deactivate
     admin.tabs.remove "Sites"
   end
+
+  def self.read_config
+    # Enable quick SiteScoping of other Models via vhost.yml config file
+    default_config = YAML.load(ERB.new(File.read(File.dirname(__FILE__) + '/lib/vhost_default_config.yml')).result).symbolize_keys
+    begin
+      custom_config = YAML.load(ERB.new(File.read(RAILS_ROOT + '/config/vhost.yml')).result).symbolize_keys rescue nil
+      default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].nil?
+    rescue
+    end
+    default_config
+    config = {}
+    config[:models] = default_config[:models].collect{|key,val| key.to_s}
+    config[:model_uniqueness_validations] = default_config[:models]
+    config
+  end
   
   private
 
@@ -54,17 +69,11 @@ class VhostExtension < Radiant::Extension
   end
   
   def process_config
-    # Enable quick SiteScoping of other Models via vhost.yml config file
-    default_config = YAML.load(ERB.new(File.read(File.dirname(__FILE__) + '/lib/vhost_default_config.yml')).result).symbolize_keys
-    begin
-      custom_config = YAML.load(ERB.new(File.read(RAILS_ROOT + '/config/vhost.yml')).result).symbolize_keys rescue nil
-      default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].nil?
-    rescue
-    end
-
+    config = VhostExtension.read_config
+    
     # Set the MODELS and MODEL_VALIDATIONS class variables so everything else can access it
-    VhostExtension.MODELS = default_config[:models].collect{|key,val| key.to_s}
-    VhostExtension.MODEL_UNIQUENESS_VALIDATIONS = default_config[:models]
+    VhostExtension.MODELS = config[:models]
+    VhostExtension.MODEL_UNIQUENESS_VALIDATIONS = config[:model_uniqueness_validations]
   end
   
   def init_scoped_access
@@ -98,7 +107,10 @@ class VhostExtension < Radiant::Extension
     # Send all of the Vhost extensions and class modifications 
     User.send :has_and_belongs_to_many, :sites
     ApplicationHelper.send :include, Vhost::ApplicationHelperExtensions
-    Admin::ResourceController.send :include, Vhost::ResourceControllerExtensions
+    # Prevents a user from Site A logging into Site B's admin area (need a spec
+    # for this to ensure it's working)
+    Admin::ResourceController.send :include, Vhost::ControllerAccessExtensions
+    Admin::PagesController.send :include, Vhost::ControllerAccessExtensions 
     Admin::PagesController.send :include, Vhost::PagesControllerExtensions
   end
   
