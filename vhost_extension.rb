@@ -125,6 +125,12 @@ class VhostExtension < Radiant::Extension
       FckeditorController.send :remove_method, :upload_directory_path
       FckeditorController.send :include, Vhost::FckeditorExtensions::Controller
     end
+    
+    # Reorder
+    reorder = Kernel.const_get("ReorderExtension") rescue false
+    if reorder
+      Page.send :include, Vhost::ReorderExtensions::Page
+    end
   end
 
   # Defines this extension's default regions (so that we can incorporate shards
