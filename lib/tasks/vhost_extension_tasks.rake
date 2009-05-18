@@ -17,17 +17,17 @@ namespace :radiant do
       # rename it something like 'apply_site_scoping' and 'reset_site_scoping' 
       # or something...
       desc "Initializes site scoping. "
-      task :initialize_site_scoping => :environment do
+      task :apply_site_scoping => :environment do
         require "#{File.dirname(__FILE__)}/add_site_columns"
-        AddSiteColumns.down
         AddSiteColumns.up
       end
       
       desc "Reinitializes site scoping in the event a new model needs to be site scoped."
-      task :reinitialize_site_scoping => :environment do
+      task :reset_site_scoping => :environment do
         require 'highline/import'
         if agree("This task will destroy any model to site relationships in the database. Are you sure \nyou want to continue? [yn] ")
-          Rake::Task["radiant:extensions:vhost:initialize_site_scoping"].invoke
+          AddSiteColumns.up
+          AddSiteColumns.down
         end
       end
     
