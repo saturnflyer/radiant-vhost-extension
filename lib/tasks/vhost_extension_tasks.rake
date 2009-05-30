@@ -63,7 +63,7 @@ namespace :db do
       :database_template => ENV['DATABASE_TEMPLATE']
     )
 
-    Rake::Task["radiant:extensions:vhost:initialize_site_scoping"].invoke
+    Rake::Task["radiant:extensions:vhost:apply_site_scoping"].invoke
 
   end
   
@@ -91,7 +91,7 @@ namespace :db do
       Radiant::ExtensionMigrator.migrate_extensions
 
       # Remigrate the extensions to catch any new site scoped extensions added
-      Rake::Task["radiant:extensions:vhost:initialize_site_scoping"].invoke
+      Rake::Task["radiant:extensions:vhost:apply_site_scoping"].invoke
       
       # Dump the schema
       Rake::Task["db:schema:dump"].invoke
