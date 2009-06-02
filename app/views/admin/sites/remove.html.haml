@@ -12,8 +12,8 @@
         = image('page', :alt => "page-icon")
         = @site.hostname
 
-- form_tag do
+- form_for [:admin, @site], :html => {:method => :delete} do
   %p.buttons
     %input.button{:type=>"submit", :value=>"Delete Site"}/
     or
-    = link_to 'Cancel', site_index_url
+    = link_to 'Cancel', admin_sites_url

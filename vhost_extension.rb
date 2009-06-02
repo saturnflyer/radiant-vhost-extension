@@ -1,3 +1,5 @@
+# FIXME - Enable multiple hostnames to be associated with the same site
+
 # You'll need this if you are going to add regions into your extension interface.
 require 'yaml'
 require 'ostruct'

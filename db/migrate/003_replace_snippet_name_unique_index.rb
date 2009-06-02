@@ -1,6 +1,6 @@
 class ReplaceSnippetNameUniqueIndex < ActiveRecord::Migration
   def self.up
-    remove_index :snippets, [:name], :name => "name"
+    remove_index :snippets, :name => :name
     add_index :snippets, [:name, :site_id], :unique => true
   end
   
