@@ -8,6 +8,10 @@ class Site < ActiveRecord::Base
   end
   
   def homepage
-    self.pages.find(:first,:conditions => {:parent_id => nil})
+    self.pages.find(:first, :conditions => {:parent_id => nil})
+  end
+
+  def self.find_by_hostname(hostname)
+    self.find(:first, :conditions => "hostname LIKE \"%#{hostname}%\"")
   end
 end
