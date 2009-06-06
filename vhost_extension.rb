@@ -59,6 +59,9 @@ class VhostExtension < Radiant::Extension
 
   def basic_extension_config
     admin.tabs.add "Sites", "/admin/sites", :after => "Layouts", :visibility => [:admin]
+    admin.user.edit.form.delete 'edit_roles'
+    admin.user.edit.add :form, 'admin/users/edit_roles', :after => 'edit_password'
+    admin.user.edit.add :form, 'admin/users/edit_sites', :after => 'edit_roles'
 
     # This adds information to the Radiant interface. In this extension, we're dealing with "site" views
     # so :sites is an attr_accessor. If you're creating an extension for tracking moons and stars, you might
@@ -96,6 +99,9 @@ class VhostExtension < Radiant::Extension
     end
     # Enable instance level calls like 'my_layout.current_site' for each model
     controllers.each do |controller| controller.constantize.send :before_filter, :set_site_scope_in_models end
+
+    # Wrap UsersController with site scoping for Site Admins
+    Admin::UsersController.send :prepend_around_filter, ScopedAccess::Filter.new(User, :users_site_scope)
   end
   
   def enable_caching
@@ -109,6 +115,8 @@ class VhostExtension < Radiant::Extension
     # Send all of the Vhost extensions and class modifications 
     User.send :has_and_belongs_to_many, :sites
     ApplicationHelper.send :include, Vhost::ApplicationHelperExtensions
+    Admin::UsersHelper.send :include, Vhost::AdminUsersHelperExtensions
+    Admin::UsersController.send :include, Vhost::AdminUsersControllerExtensions
     # Prevents a user from Site A logging into Site B's admin area (need a spec
     # for this to ensure it's working)
     Admin::ResourceController.send :include, Vhost::ControllerAccessExtensions

@@ -1,0 +1,8 @@
+- if admin?
+  %tr
+    %th.label
+      %label{:for=>"user_site_ids"} Sites
+    %td.field{:style=>"text-align: left;"}
+      = collection_select :user, :site_ids, admin? ? Site.find(:all) : current_user.sites, :id, :hostname, {}, :multiple => true, :name => 'user[site_ids][]', :size => '10'
+    %td.help
+      Optional.
