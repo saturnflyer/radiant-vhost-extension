@@ -135,7 +135,13 @@ class VhostExtension < Radiant::Extension
       FckeditorController.send :remove_method, :upload_directory_path
       FckeditorController.send :include, Vhost::FckeditorExtensions::Controller
     end
-    
+
+    # File Manager
+    mf = Kernel.const_get("ManagedFile") rescue false
+    if mf
+      ManagedFile.send :include, Vhost::ManagedFileExtensions
+    end
+
   end
 
   # Defines this extension's default regions (so that we can incorporate shards
