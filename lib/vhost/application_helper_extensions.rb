@@ -6,10 +6,6 @@ module Vhost::ApplicationHelperExtensions
     receiver.send :define_method, :site_admin? do
       current_user and (current_user.site_admin? or current_user.admin?)
     end
-    receiver.send :remove_method, :developer?
-    receiver.send :define_method, :developer? do
-      current_user and (current_user.developer? or current_user.admin? or current_user.site_admin?)
-    end
   end
   
   def subtitle_with_site_hostname
