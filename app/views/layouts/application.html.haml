@@ -37,9 +37,10 @@
           - if logged_in?
             - if admin? || site_admin?
               = nav_link_to 'Users', admin_users_path
+            - if admin?
               %span.separator=" | "
               = nav_link_to 'Extensions', admin_extensions_path
-            - else
+            - if !admin? && !site_admin?
               = nav_link_to 'Preferences', admin_preferences_url
             %span.separator=" | "
             = nav_link_to 'Log Out', logout_url

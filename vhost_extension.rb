@@ -93,11 +93,11 @@ class VhostExtension < Radiant::Extension
     VhostExtension.MODELS.each do |model|
       # Instantiate the ScopedAccess filter for each model
       controllers.each do |controller| controller.constantize.send :prepend_around_filter, ScopedAccess::Filter.new(model.constantize, :site_scope) end
-      # Enable class level calls like 'Layout.class.current_site' for each model
+      # Enable class level calls like 'Layout.class.current_site' for each model (overkill?)
       model.constantize.send :cattr_accessor, :current_site
       model.constantize.send :include, Vhost::SiteScopedModelExtensions
     end
-    # Enable instance level calls like 'my_layout.current_site' for each model
+    # Enable instance level calls like 'my_layout.current_site' for each model (overkill?)
     controllers.each do |controller| controller.constantize.send :before_filter, :set_site_scope_in_models end
 
     # Wrap UsersController with site scoping for Site Admins
