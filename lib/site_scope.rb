@@ -28,7 +28,7 @@ module SiteScope
     @users_site_scope = {}
     # Only do the user site scoping if it's a site_admin. We don't want the admin to be restricted.
     if current_user.site_admin?
-      @users_site_scope ||= {
+      @users_site_scope = {
         :find => { :joins => "JOIN sites_users AS scoped_sites_users ON scoped_sites_users.user_id = id", :conditions => ["scoped_sites_users.site_id = ?", current_site.id]},
         # Make sure admin is always false - wouldn't want someone trying to set it to true through some html magic
         :create => { :site_ids => [current_site.id], :admin => false }
