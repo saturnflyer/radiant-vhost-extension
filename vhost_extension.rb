@@ -142,6 +142,12 @@ class VhostExtension < Radiant::Extension
       ManagedFile.send :include, Vhost::ManagedFileExtensions
     end
 
+    # File Manager
+    mf = Kernel.const_get("PodcastImage") rescue false
+    if mf
+      PodcastImage.send :include, Vhost::PodcastImageExtensions
+    end
+
   end
 
   # Defines this extension's default regions (so that we can incorporate shards
