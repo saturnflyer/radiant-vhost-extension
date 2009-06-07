@@ -4,7 +4,7 @@
 module CacheByDomain
   def show_page
     response.headers.delete('Cache-Control')
-    
+
     url = params[:url]
     if Array === url
       url = url.join('/')

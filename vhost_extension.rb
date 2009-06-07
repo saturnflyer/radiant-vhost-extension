@@ -3,7 +3,7 @@
 # You'll need this if you are going to add regions into your extension interface.
 require 'yaml'
 require 'ostruct'
-require_dependency 'application'
+require_dependency 'application_controller'
 require File.join(File.dirname(__FILE__), 'lib/scoped_access_init')
 require File.join(File.dirname(__FILE__), 'vendor/scoped_access/lib/scoped_access')
 
@@ -106,9 +106,13 @@ class VhostExtension < Radiant::Extension
   
   def enable_caching
     # Enable caching per site by rewriting the show_page method
-    SiteController.send :alias_method, :show_page_orig, :show_page
-    SiteController.send :remove_method, :show_page
-    SiteController.send :include, CacheByDomain
+    #SiteController.send :alias_method, :show_page_orig, :show_page
+    #SiteController.send :remove_method, :show_page
+    #SiteController.send :include, CacheByDomain
+    #Rack::Cache::Request.send :include, Vhost::RadiantCacheExtensions::RackCacheRequest
+    Radiant::Cache.send :include, Vhost::RadiantCacheExtensions::RadiantCache
+    Radiant::Cache::MetaStore.send :include, Vhost::RadiantCacheExtensions::MetaStore
+    Admin::PagesController.send :include, Vhost::PagesControllerExtensions
   end
   
   def modify_classes
@@ -121,7 +125,6 @@ class VhostExtension < Radiant::Extension
     # for this to ensure it's working)
     Admin::ResourceController.send :include, Vhost::ControllerAccessExtensions
     Admin::PagesController.send :include, Vhost::ControllerAccessExtensions 
-    Admin::PagesController.send :include, Vhost::PagesControllerExtensions
   end
   
   def extension_support

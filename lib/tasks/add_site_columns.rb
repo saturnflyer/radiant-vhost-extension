@@ -14,6 +14,10 @@ class AddSiteColumns < ActiveRecord::Migration
       begin
         add_column model.tableize, :site_id, :integer
         model.constantize.update_all "site_id = 1"
+        # Special case for Snippets to add a proper index
+        if model == 'Snippet'
+          add_index :snippets, [:name, :site_id], :unique => true
+        end
       rescue
         # Ignore errors here, they're going to happen when the user
         # does a 'remigrate'
@@ -25,6 +29,10 @@ class AddSiteColumns < ActiveRecord::Migration
   def self.down
     MODELS.each do |model|
       begin
+        # Special case for Snippets to remove index
+        if model == 'Snippet'
+          remove_index :snippets, [:name, :site_id]
+        end
         remove_column model.tableize, :site_id
       rescue
         # Ignore errors here, they're going to happen when the user
