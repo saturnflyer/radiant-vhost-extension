@@ -25,14 +25,16 @@ module Vhost::SiteScopedModelExtensions
       # Callbacks are stored by kind as instance variables named @<kind>_callbacks. 
       # Fetch them so we can kick out the matching items.
       callback_chain = eval("@#{kind.to_s}_callbacks")
-      callback_chain.reject! do |callback|
-        method = callback.method
-        if method.is_a?(Proc)
-          # Returns the symbol for the method the proc was declared in
-          current_calling_method_name = eval("caller[0] =~ /`([^']*)'/ and $1", method.binding).to_s rescue nil
-          current_calling_method_name == calling_method_name
-        else
-          false
+      unless callback_chain.nil?
+        callback_chain.reject! do |callback|
+          method = callback.method
+          if method.is_a?(Proc)
+            # Returns the symbol for the method the proc was declared in
+            current_calling_method_name = eval("caller[0] =~ /`([^']*)'/ and $1", method.binding).to_s rescue nil
+            current_calling_method_name == calling_method_name
+          else
+            false
+          end
         end
       end
     end
