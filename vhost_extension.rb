@@ -108,7 +108,6 @@ class VhostExtension < Radiant::Extension
     # Enable caching per site
     Radiant::Cache.send :include, Vhost::RadiantCacheExtensions::RadiantCache
     Radiant::Cache::MetaStore.send :include, Vhost::RadiantCacheExtensions::MetaStore
-    Radiant::Cache::EntityStore.send :include, Vhost::RadiantCacheExtensions::EntityStore
     Admin::PagesController.send :include, Vhost::PagesControllerExtensions
   end
   
