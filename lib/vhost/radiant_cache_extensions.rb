@@ -45,4 +45,8 @@ module Vhost::RadiantCacheExtensions
       }
     end    
   end
+
+  # FIXME - Add support for EntityStore - MetaStore is the most important caching
+  # mechanism to be able to clear by site but EntityStore would be great too.
+
 end

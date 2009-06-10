@@ -8,7 +8,10 @@ module SiteScope
     # For testing we won't have a request.host so we're going to use a class 
     # variable (VhostExtension.HOST) in those cases.
     host ||= VhostExtension.HOST || request.host
-    @current_site ||=  Site.find_by_hostname(host) || Site.find_by_hostname('*')
+    # Remove the 'www.' from the site so we don't have to always include a www. 
+    # in addition to the regular domain name.
+    host.gsub!(/^www\./, '')
+    @current_site ||=  Site.find_by_hostname(host) || Site.find_by_hostname('*') || Site.find(:all, :conditions => ["hostname LIKE ?", "%#{host}%"])
     raise "No site found to match #{host}." unless @current_site
     @current_site
   end

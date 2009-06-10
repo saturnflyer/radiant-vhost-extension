@@ -105,13 +105,10 @@ class VhostExtension < Radiant::Extension
   end
   
   def enable_caching
-    # Enable caching per site by rewriting the show_page method
-    #SiteController.send :alias_method, :show_page_orig, :show_page
-    #SiteController.send :remove_method, :show_page
-    #SiteController.send :include, CacheByDomain
-    #Rack::Cache::Request.send :include, Vhost::RadiantCacheExtensions::RackCacheRequest
+    # Enable caching per site
     Radiant::Cache.send :include, Vhost::RadiantCacheExtensions::RadiantCache
     Radiant::Cache::MetaStore.send :include, Vhost::RadiantCacheExtensions::MetaStore
+    Radiant::Cache::EntityStore.send :include, Vhost::RadiantCacheExtensions::EntityStore
     Admin::PagesController.send :include, Vhost::PagesControllerExtensions
   end
   
@@ -145,7 +142,7 @@ class VhostExtension < Radiant::Extension
       ManagedFile.send :include, Vhost::ManagedFileExtensions
     end
 
-    # File Manager
+    # Podcast
     mf = Kernel.const_get("PodcastImage") rescue false
     if mf
       PodcastImage.send :include, Vhost::PodcastImageExtensions
