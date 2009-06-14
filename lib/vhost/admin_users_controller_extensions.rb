@@ -5,5 +5,14 @@ module Vhost::AdminUsersControllerExtensions
       :denied_url => { :controller => 'pages', :action => 'index' },
       :denied_message => 'You must have administrative privileges to perform this action.'
 
+    receiver.class_eval {
+      def load_model
+        self.model = if params[:id]
+          model_class.find(params[:id], :readonly => false)
+        else
+          model_class.new
+        end
+      end
+    }
   end
 end
