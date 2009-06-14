@@ -12,12 +12,15 @@ class VhostExtension < Radiant::Extension
   description "Host multiple sites on a single instance."
   url "http://github.com/jgarber/radiant-vhost-extension"
 
+  # FIXME - Clear up the configuration stuff, it's kinda crufty
+  
   class << self
     # Set during tests and used to simulate having a populated request.host
     attr_accessor :HOST
     # Sets the models that are scoped down to a site
     attr_accessor :MODELS
     attr_accessor :MODEL_UNIQUENESS_VALIDATIONS
+    attr_accessor :REDIRECT_TO_PRIMARY_SITE
   end
 
   # These routes are added to the radiant routes file and works just like any rails routes.
@@ -46,10 +49,11 @@ class VhostExtension < Radiant::Extension
     begin
       custom_config = YAML.load(ERB.new(File.read(RAILS_ROOT + '/config/vhost.yml')).result).symbolize_keys rescue nil
       default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].nil?
+      default_config[:redirect_to_primary_site] = custom_config[:redirect_to_primary_site] unless custom_config[:redirect_to_primary_site].nil?
     rescue
     end
-    default_config
     config = {}
+    config[:redirect_to_primary_site] = default_config[:redirect_to_primary_site]
     config[:models] = default_config[:models].collect{|key,val| key.to_s}
     config[:model_uniqueness_validations] = default_config[:models]
     config
@@ -75,6 +79,8 @@ class VhostExtension < Radiant::Extension
   
   def process_config
     config = VhostExtension.read_config
+    
+    VhostExtension.REDIRECT_TO_PRIMARY_SITE = config[:redirect_to_primary_site]
     
     # Set the MODELS and MODEL_VALIDATIONS class variables so everything else can access it
     VhostExtension.MODELS = config[:models]
@@ -121,6 +127,7 @@ class VhostExtension < Radiant::Extension
     # for this to ensure it's working)
     Admin::ResourceController.send :include, Vhost::ControllerAccessExtensions
     Admin::PagesController.send :include, Vhost::ControllerAccessExtensions 
+    ApplicationController.send :include, Vhost::ApplicationControllerExtensions 
   end
   
   def extension_support
@@ -130,6 +137,8 @@ class VhostExtension < Radiant::Extension
     # FCKeditor
     fck = Kernel.const_get("FckeditorExtension") rescue false
     if fck
+      # FIXME - use class_eval to rewrite methods instead of removing methods
+      # here and adding them in the extension.
       FckeditorController.send :remove_method, :current_directory_path
       FckeditorController.send :remove_method, :upload_directory_path
       FckeditorController.send :include, Vhost::FckeditorExtensions::Controller

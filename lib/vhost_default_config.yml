@@ -1,3 +1,4 @@
+redirect_to_primary_site: false
 models:
  Layout:
    name: 

@@ -5,6 +5,7 @@ module SiteScope
   end
   
   def current_site
+    return @current_site unless @current_site.nil?
     # For testing we won't have a request.host so we're going to use a class 
     # variable (VhostExtension.HOST) in those cases.
     host ||= VhostExtension.HOST || request.host
@@ -46,6 +47,8 @@ module SiteScope
     VhostExtension.MODELS.each do |model|
       model.constantize.current_site = self.current_site
     end
+    Site.send :cattr_accessor, :current_site
+    Site.current_site = self.current_site
   end
   
 end
