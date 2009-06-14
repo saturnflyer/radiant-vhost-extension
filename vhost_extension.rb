@@ -150,6 +150,12 @@ class VhostExtension < Radiant::Extension
       ManagedFile.send :include, Vhost::ManagedFileExtensions
     end
 
+    # Gallery
+    gl = Kernel.const_get("Gallery") rescue false
+    if gl
+      GalleryItem.send :include, Vhost::GalleryItemExtensions
+    end
+
     # Podcast
     mf = Kernel.const_get("PodcastImage") rescue false
     if mf
