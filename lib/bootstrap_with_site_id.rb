@@ -12,6 +12,7 @@ module BootstrapWithSiteId
     end
     unless filename
       templates = find_and_load_templates("#{RAILS_ROOT}/vendor/extensions/vhost/db/templates/*.yml")
+      templates.concat find_and_load_templates("#{RADIANT_ROOT}/config/extensions/vhost/db/templates/*.yml")
       templates.concat find_and_load_templates("#{RAILS_ROOT}/db/templates/*.yml") if RADIANT_ROOT != RAILS_ROOT
       choose do |menu|
         menu.header = "\nSelect a database template"
@@ -21,5 +22,19 @@ module BootstrapWithSiteId
       end
     end
     create_records(template)
+  end
+
+  def find_template_in_path_with_site_id(filename)
+        [
+          filename,
+          "#{RAILS_ROOT}/vendor/extensions/vhost/db/templates/#{filename}",
+          "#{RADIANT_ROOT}/config/extensions/vhost/db/templates/#{filename}",
+          "#{RADIANT_ROOT}/#{filename}",
+          "#{RADIANT_ROOT}/db/templates/#{filename}",
+          "#{RAILS_ROOT}/#{filename}",
+          "#{RAILS_ROOT}/db/templates/#{filename}",
+          "#{Dir.pwd}/#{filename}",
+          "#{Dir.pwd}/db/templates/#{filename}",
+        ].find { |name| File.file?(name) }
   end
 end

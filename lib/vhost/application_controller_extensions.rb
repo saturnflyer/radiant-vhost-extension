@@ -6,7 +6,7 @@ module Vhost::ApplicationControllerExtensions
       def redirect_to_primary_site
         if VhostExtension.REDIRECT_TO_PRIMARY_SITE
           site = current_site
-          return if site.nil?
+          return if site.nil? || site.hostname.include?("*")
           
           # Rebuild the current URL. Check if it matches the URL of the
           # primary site and redirect if it does not.

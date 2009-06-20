@@ -55,6 +55,7 @@ namespace :db do
     require File.join(File.dirname(__FILE__), '../bootstrap_with_site_id')
     Radiant::Setup.send :include, BootstrapWithSiteId
     Radiant::Setup.send :alias_method_chain, :load_database_template, :site_id
+    Radiant::Setup.send :alias_method_chain, :find_template_in_path, :site_id
     
     Radiant::Setup.bootstrap(
       :admin_name => ENV['ADMIN_NAME'],
@@ -75,20 +76,28 @@ namespace :db do
       agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [yn] ")
       
       # Migrate extensions downward
-      Radiant::Extension.descendants.each do |ext|
+      Radiant::ExtensionLoader.instance.extensions.each do |ext|
         # The first time you bootstrap you'll always encounter exceptions
         # so be sure to ignore them here.
-        ext.migrator.migrate(0) rescue nil 
+        begin
+          ext.migrator.migrate(0)
+        rescue
+          puts "An error occurred while migrating the #{ext} extension downward: #{$!}"
+        end
       end
       
       # Migrate downward
       ActiveRecord::Migrator.migrate("#{RADIANT_ROOT}/db/migrate/", 0)
-    
+
       # Migrate upward 
       Rake::Task["db:migrate"].invoke
       
       # Migrate extensions upward
-      Radiant::ExtensionMigrator.migrate_extensions
+      Radiant::ExtensionLoader.instance.extensions.each do |ext|
+        # The first time you bootstrap you'll always encounter exceptions
+        # so be sure to ignore them here.
+        ext.migrator.migrate
+      end
 
       # Remigrate the extensions to catch any new site scoped extensions added
       Rake::Task["radiant:extensions:vhost:apply_site_scoping"].invoke
