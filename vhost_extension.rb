@@ -160,6 +160,7 @@ class VhostExtension < Radiant::Extension
     mf = Kernel.const_get("PodcastImage") rescue false
     if mf
       PodcastImage.send :include, Vhost::PodcastImageExtensions
+      PodcastEpisode.send :include, Vhost::PodcastEpisodeExtensions
     end
 
   end
