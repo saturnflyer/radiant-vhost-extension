@@ -21,6 +21,16 @@ module BootstrapWithSiteId
         templates.each { |t| menu.choice(t['name']) { template = t } }
       end
     end
+    # If there are sites defined create them first as there are many to many
+    # relationships from users to sites that need to be created and will fail
+    # if the site isn't created first.
+    if !template['records']['Sites'].nil?
+      site_template = {}
+      site_template['records'] = {}
+      site_template['records']['Sites'] = template['records']['Sites']
+      create_records(site_template)
+      site_template['records'].delete('Sites')
+    end
     create_records(template)
   end
 
