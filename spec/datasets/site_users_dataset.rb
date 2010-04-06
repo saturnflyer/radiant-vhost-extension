@@ -6,13 +6,13 @@ class SiteUsersDataset < Dataset::Base
     create_user "User B"
     create_user "Admin A", :admin => true
     create_user "Admin B", :admin => true
-    create_user "Developer A", :developer => true
-    create_user "Developer B", :developer => true
+    create_user "Developer A", :designer => true
+    create_user "Developer B", :designer => true
   end
   
   helpers do
     def create_user(name, attributes={})
-      create_model :user, name.symbolize, user_attributes(attributes.update(:name => name))
+      create_model :user, name.symbolize, user_attributes(attributes.update(:name => name, :email => nil))
     end
     def user_attributes(attributes={})
       name = attributes[:name] || "John Doe"

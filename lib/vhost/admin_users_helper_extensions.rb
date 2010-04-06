@@ -11,7 +11,7 @@ module Vhost::AdminUsersHelperExtensions
     roles = []
     roles << 'Admin' if user.admin?
     roles << 'Site Admin' if user.site_admin?
-    roles << 'Developer' if user.developer?
+    roles << 'Designer' if user.designer?
     roles.join(', ')
   end
 end

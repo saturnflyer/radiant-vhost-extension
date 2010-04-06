@@ -2,6 +2,8 @@ class Site < ActiveRecord::Base
   has_and_belongs_to_many :users
   has_many :pages
   
+  accepts_nested_attributes_for :users
+  
   def allow_access_for(user)
     # Admin can access all sites. Users can only access sites to which they belong
     user.admin? || self.users.include?(user)

@@ -1,0 +1,21 @@
+.outset
+  %table#sites.index{:cellpadding=>"0", :cellspacing=>"0", :border=>"0"}
+    %thead
+      %tr
+        %th.hostname Host
+        %th.users Users
+        %th.modify Modify
+    %tbody
+      - unless @sites.empty?
+        - for site in @sites
+          %tr.node.level-1
+            %td.site
+              = link_to site.hostname, edit_admin_site_url(:id => site)
+            %td.users= site.users.collect(&:name).join(', ')
+            %td.remove= link_to('Remove Site', remove_admin_site_url(:id => site))
+      - else
+        %tr
+          %td.note{:colspan=>3} No Sites
+#actions
+  %ul
+    %li= link_to 'New Site', new_admin_site_url

@@ -11,8 +11,8 @@ module Vhost::RadiantCacheExtensions
           self.use_x_sendfile = options.delete(:use_x_sendfile) if options[:use_x_sendfile]
           self.use_x_accel_redirect = options.delete(:use_x_accel_redirect) if options[:use_x_accel_redirect]
           Rack::Cache.new(app, {
-              :entitystore => "radiant:cache/entity", 
-              :metastore => "radiant:cache/meta",
+              :entitystore => "radiant:tmp/cache/entity", 
+              :metastore => "radiant:tmp/cache/meta",
               :verbose => false}.merge(options))
         end
         def self.clear(host_and_url = nil)

@@ -40,7 +40,6 @@ class VhostExtension < Radiant::Extension
   end
   
   def deactivate
-    admin.tabs.remove "Sites"
   end
 
   def self.read_config
@@ -62,7 +61,9 @@ class VhostExtension < Radiant::Extension
   private
 
   def basic_extension_config
-    admin.tabs.add "Sites", "/admin/sites", :after => "Layouts", :visibility => [:admin]
+    tab "Sites" do
+      add_item "All", "/admin/sites"
+    end
     admin.user.edit.form.delete 'edit_roles'
     admin.user.edit.add :form, 'admin/users/edit_roles', :after => 'edit_password'
     admin.user.edit.add :form, 'admin/users/edit_sites', :after => 'edit_roles'
