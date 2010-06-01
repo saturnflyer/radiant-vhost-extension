@@ -24,13 +24,6 @@ class VhostExtension < Radiant::Extension
   # extension_config do |config|
   #   config.gem 'ancestry'
   # end
-
-  # These routes are added to the radiant routes file and works just like any rails routes.
-  define_routes do |map|
-    map.namespace :admin, :member => { :remove => :get } do |admin|
-      admin.resources :sites, :member => {:switch_to => :get}
-    end
-  end
   
   def activate
     process_config
