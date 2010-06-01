@@ -5,8 +5,8 @@ class Site < ActiveRecord::Base
   accepts_nested_attributes_for :users
   
   def allow_access_for(user)
-    # Admin can access all sites. Users can only access sites to which they belong
-    user.admin? || self.users.include?(user)
+    # Site Admins can access all sites. Users can only access sites to which they belong
+    user.site_admin? || self.users.include?(user)
   end
   
   def homepage
