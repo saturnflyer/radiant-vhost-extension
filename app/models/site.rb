@@ -14,6 +14,10 @@ class Site < ActiveRecord::Base
   end
 
   def self.find_by_hostname(hostname)
-    self.find(:first, :conditions => "hostname LIKE \"%#{hostname}%\"")
+    # allow vhost to be added to existing sites
+    if Site.count == 0
+      Site.create!(:hostname => hostname)
+    end
+    self.find(:first, :conditions => ["hostname LIKE ?", "%#{hostname}%"])
   end
 end
