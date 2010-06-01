@@ -10,7 +10,7 @@ describe User do
   end
   
   it 'should have at least one associated site' do
-    users(:user_a).should have_at_least(1).sites
+    users(:usera).should have_at_least(1).sites
   end
 
 end

@@ -12,7 +12,7 @@ describe Site do
   end
 
   it "should allow users to be associated" do
-    user = users(:user_a)
+    user = users(:usera)
     @site.users << user
     @site.users.should have(1).items
   end

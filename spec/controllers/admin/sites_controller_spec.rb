@@ -13,17 +13,17 @@ describe Admin::SitesController do
         lambda { send(method, action, :id => site_id(:site_a)).should require_login }
       end
 
-      it "should allow you to access to #{action} action if you are an admin" do
+      it "should allow you to access to #{action} action if you are a site_admin" do
         lambda { 
           send(method, action, :id => site_id(:site_a)) 
-        }.should restrict_access(:allow => users(:admin),
+        }.should restrict_access(:allow => users(:admina),
                                  :url => '/admin/page')
       end
       
-      it "should deny you access to #{action} action if you are not an admin" do
+      it "should deny you access to #{action} action if you are not a site_admin" do
         lambda { 
           send(method, action, :id => site_id(:site_a)) 
-        }.should restrict_access(:deny => [users(:developer_a), users(:developer_b), users(:user_a), users(:user_b)],
+        }.should restrict_access(:deny => [users(:developera), users(:developerb), users(:usera), users(:userb)],
                                  :url => '/admin/page')
       end
     end

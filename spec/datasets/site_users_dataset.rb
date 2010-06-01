@@ -2,24 +2,24 @@ class SiteUsersDataset < Dataset::Base
   uses :users
   
   def load
-    create_user "User A"
-    create_user "User B"
-    create_user "Admin A", :admin => true
-    create_user "Admin B", :admin => true
-    create_user "Developer A", :designer => true
-    create_user "Developer B", :designer => true
+    create_user "UserA"
+    create_user "UserB"
+    create_user "AdminA", :admin => true, :site_admin => true
+    create_user "AdminB", :admin => true
+    create_user "DeveloperA", :designer => true
+    create_user "DeveloperB", :designer => true
   end
   
   helpers do
     def create_user(name, attributes={})
-      create_model :user, name.symbolize, user_attributes(attributes.update(:name => name, :email => nil))
+      create_model :user, name.symbolize, user_attributes(attributes.update(:name => name))
     end
     def user_attributes(attributes={})
       name = attributes[:name] || "John Doe"
       symbol = name.symbolize
       attributes = { 
         :name => name,
-        :email => "#{symbol}@example.com", 
+        :email => "test@example.com", 
         :login => symbol.to_s,
         :password => "password"
       }.merge(attributes)

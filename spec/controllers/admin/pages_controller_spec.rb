@@ -8,8 +8,8 @@ describe Admin::PagesController do
     rescue_action_in_public!  # ActionController::TestCase no longer considers this request a local request
 
     # don't bork results with stale cache items
-    controller.cache.clear
-    login_as :user_a
+    Radiant::Cache.clear
+    login_as :usera
   end
 
   describe "creating pages" do
@@ -29,7 +29,7 @@ describe Admin::PagesController do
     # @todo it "should allow <various> actions for users that belong to multiple sites" 
     # (or something like that. probably just hook into the block below.)
   
-    [:admin_a, :developer_a, :user_a].each do |user|
+    [:admina, :developera, :usera].each do |user|
       {
         :post => :create,
         :put => :update,
@@ -43,7 +43,7 @@ describe Admin::PagesController do
       end
     end
 
-    [:developer_a, :user_a].each do |user|
+    [:developera, :usera].each do |user|
       {
         :post => :create,
         :put => :update,

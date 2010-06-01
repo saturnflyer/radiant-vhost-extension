@@ -9,7 +9,7 @@ describe SiteController do
     rescue_action_in_public!  # ActionController::TestCase no longer considers this request a local request
 
     # don't bork results with stale cache items
-    controller.cache.clear
+    Radiant::Cache.clear
   end
 
   it "should find and render the home page for the #{VhostExtension.HOST} site" do
