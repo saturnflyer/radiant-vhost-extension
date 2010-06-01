@@ -10,7 +10,6 @@ module Vhost::ControllerAccessExtensions
       self.current_user = nil
       flash[:error] = 'Access denied.'
       redirect_to login_url
-#      redirect_to :controller => 'welcome', :action => 'login'
     end
   end
 end
