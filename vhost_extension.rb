@@ -1,6 +1,4 @@
 # FIXME - Enable multiple hostnames to be associated with the same site
-
-# You'll need this if you are going to add regions into your extension interface.
 require 'yaml'
 require 'ostruct'
 require_dependency 'application_controller'
@@ -10,7 +8,7 @@ require File.join(File.dirname(__FILE__), 'vendor/scoped_access/lib/scoped_acces
 class VhostExtension < Radiant::Extension
   version "2.0"
   description "Host multiple sites on a single instance."
-  url "http://github.com/jgarber/radiant-vhost-extension"
+  url "http://github.com/saturnflyer/radiant-vhost-extension"
 
   # FIXME - Clear up the configuration stuff, it's kinda crufty
   
@@ -22,6 +20,10 @@ class VhostExtension < Radiant::Extension
     attr_accessor :MODEL_UNIQUENESS_VALIDATIONS
     attr_accessor :REDIRECT_TO_PRIMARY_SITE
   end
+  
+  # extension_config do |config|
+  #   config.gem 'ancestry'
+  # end
 
   # These routes are added to the radiant routes file and works just like any rails routes.
   define_routes do |map|
@@ -36,7 +38,6 @@ class VhostExtension < Radiant::Extension
     init_scoped_access
     enable_caching
     modify_classes
-    extension_support
   end
   
   def deactivate
@@ -64,13 +65,11 @@ class VhostExtension < Radiant::Extension
     tab "Sites" do
       add_item "All", "/admin/sites"
     end
-    admin.user.edit.form.delete 'edit_roles'
-    admin.user.edit.add :form, 'admin/users/edit_roles', :after => 'edit_password'
+    admin.user.index.add :thead, 'sites_th', :before => 'modify_header'
+    admin.user.index.add :tbody, 'sites_td', :before => 'modify_cell'
+    admin.user.edit.add :form, 'admin/users/site_admin_roles', :after => 'edit_roles'
     admin.user.edit.add :form, 'admin/users/edit_sites', :after => 'edit_roles'
 
-    # This adds information to the Radiant interface. In this extension, we're dealing with "site" views
-    # so :sites is an attr_accessor. If you're creating an extension for tracking moons and stars, you might
-    # put attr_accessor :moon, :star
     Radiant::AdminUI.class_eval do
       attr_accessor :sites
     end
@@ -129,41 +128,6 @@ class VhostExtension < Radiant::Extension
     Admin::ResourceController.send :include, Vhost::ControllerAccessExtensions
     Admin::PagesController.send :include, Vhost::ControllerAccessExtensions 
     ApplicationController.send :include, Vhost::ApplicationControllerExtensions 
-  end
-  
-  def extension_support
-    # SUPPORT FOR OTHER EXTENSIONS
-    # I'm sure there's an DRYer way to do these checks, doing it the poor way for now.
-    
-    # FCKeditor
-    fck = Kernel.const_get("FckeditorExtension") rescue false
-    if fck
-      # FIXME - use class_eval to rewrite methods instead of removing methods
-      # here and adding them in the extension.
-      FckeditorController.send :remove_method, :current_directory_path
-      FckeditorController.send :remove_method, :upload_directory_path
-      FckeditorController.send :include, Vhost::FckeditorExtensions::Controller
-    end
-
-    # File Manager
-    mf = Kernel.const_get("ManagedFile") rescue false
-    if mf
-      ManagedFile.send :include, Vhost::ManagedFileExtensions
-    end
-
-    # Gallery
-    gl = Kernel.const_get("Gallery") rescue false
-    if gl
-      GalleryItem.send :include, Vhost::GalleryItemExtensions
-    end
-
-    # Podcast
-    mf = Kernel.const_get("PodcastImage") rescue false
-    if mf
-      PodcastImage.send :include, Vhost::PodcastImageExtensions
-      PodcastEpisode.send :include, Vhost::PodcastEpisodeExtensions
-    end
-
   end
 
   # Defines this extension's default regions (so that we can incorporate shards

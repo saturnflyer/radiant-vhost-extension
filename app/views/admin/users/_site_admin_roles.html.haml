@@ -1,0 +1,5 @@
+- if current_user.site_admin?
+  %p
+    = f.check_box "site_admin", :class => "checkbox"
+    = f.label :site_admin, 'Site admin', :class => "checkbox"
+    A site admin can make changes to all sites.
