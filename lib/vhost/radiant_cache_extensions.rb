@@ -26,7 +26,7 @@ module Vhost::RadiantCacheExtensions
   module MetaStore
     def self.included(base)
       base.class_eval {
-        def initialize(root="#{Rails.root}/cache/meta")
+        def initialize(root="#{Rails.root}/tmp/cache/meta")
           super
           Radiant::Cache.meta_stores << self
         end
@@ -39,9 +39,10 @@ module Vhost::RadiantCacheExtensions
           end
         end
   
-        def cache_key(request)
-          "#{request.host}#{request.path_info}"
-        end
+        # cache_key should, by default, include the host as well the query string
+        # def cache_key(request)
+        #   "#{request.host}#{request.path_info}"
+        # end
       }
     end    
   end
