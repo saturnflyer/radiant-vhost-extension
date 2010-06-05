@@ -3,6 +3,9 @@ class Site < ActiveRecord::Base
   has_many :pages
   
   accepts_nested_attributes_for :users
+  VhostExtension.MODELS.each do |model|
+    has_many model.tableize.to_sym unless model.tableize.match(/pages|users/) # unless already defined
+  end
   
   def allow_access_for(user)
     # Site Admins can access all sites. Users can only access sites to which they belong
