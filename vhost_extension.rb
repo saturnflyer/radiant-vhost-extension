@@ -55,8 +55,8 @@ class VhostExtension < Radiant::Extension
   private
 
   def basic_extension_config
-    tab "Sites" do
-      add_item "All", "/admin/sites"
+    tab "Settings" do
+      add_item "Sites", "/admin/sites"
     end
     admin.user.index.add :thead, 'sites_th', :before => 'modify_header'
     admin.user.index.add :tbody, 'sites_td', :before => 'modify_cell'
