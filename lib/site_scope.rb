@@ -35,7 +35,7 @@ module SiteScope
       @users_site_scope = {
         :find => { :joins => "JOIN sites_users AS scoped_sites_users ON scoped_sites_users.user_id = id", :conditions => ["scoped_sites_users.site_id = ?", current_site.id]},
         # Make sure admin is always false - wouldn't want someone trying to set it to true through some html magic
-        :create => { :site_ids => [current_site.id], :admin => false }
+        :create => { :site_ids => [current_site.id], :site_admin => false }
       }
     end
     return @users_site_scope
