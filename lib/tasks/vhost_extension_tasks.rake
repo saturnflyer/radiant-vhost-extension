@@ -26,7 +26,7 @@ namespace :radiant do
       end
       
       desc "Reinitializes site scoping in the event a new model needs to be site scoped."
-      task :reset_site_scoping => :environment do
+      task :destroy_site_scoping => :environment do
         require 'highline/import'
         if agree("This task will destroy any model to site relationships in the database. Are you sure \nyou want to continue? [yn] ")
           AddSiteColumns.up
