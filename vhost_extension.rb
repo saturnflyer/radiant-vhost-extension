@@ -2,7 +2,6 @@
 require 'yaml'
 require 'ostruct'
 require_dependency 'application_controller'
-require File.join(File.dirname(__FILE__), 'lib/scoped_access_init')
 require File.join(File.dirname(__FILE__), 'vendor/scoped_access/lib/scoped_access')
 
 class VhostExtension < Radiant::Extension
