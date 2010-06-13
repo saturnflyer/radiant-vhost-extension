@@ -1,8 +1,20 @@
-# I think this is the one that should be moved to the extension Rakefile template
+require 'rake'
 
-# In rails 1.2, plugins aren't available in the path until they're loaded.
-# Check to see if the rspec plugin is installed first and require
-# it if it is.  If not, use the gem version.
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "radiant-vhost-extension"
+    gem.summary = %Q{Vhost Extension for Radiant CMS}
+    gem.description = %Q{Host more than one site in a single instance of Radiant.}
+    gem.email = "jim@saturnflyer.com"
+    gem.homepage = "http://github.com/saturnflyer/radiant-vhost-extension"
+    gem.authors = ["Jason Garber",'Kaleb Walton', 'Jim Gay']
+    gem.add_development_dependency "radiant"
+  end
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. This is only required if you plan to package vhost as a gem."
+end
+
 
 # Determine where the RSpec plugin is by loading the boot
 unless defined? RADIANT_ROOT
@@ -17,14 +29,15 @@ unless defined? RADIANT_ROOT
   end
 end
 
-require 'rake'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
-rspec_base = File.expand_path(RADIANT_ROOT + '/vendor/plugins/rspec/lib')
-$LOAD_PATH.unshift(rspec_base) if File.exist?(rspec_base)
+if defined? RADIANT_ROOT
+  rspec_base = File.expand_path(RADIANT_ROOT + '/vendor/plugins/rspec/lib')
+  $LOAD_PATH.unshift(rspec_base) if File.exist?(rspec_base)
+end
+
 require 'spec/rake/spectask'
-# require 'spec/translator'
 
 # Cleanup the RADIANT_ROOT constant so specs will load the environment
 Object.send(:remove_const, :RADIANT_ROOT)
@@ -62,14 +75,6 @@ namespace :spec do
       t.spec_files = FileList["spec/#{sub}/**/*_spec.rb"]
     end
   end
-  
-  # Hopefully no one has written their extensions in pre-0.9 style
-  # desc "Translate specs from pre-0.9 to 0.9 style"
-  # task :translate do
-  #   translator = ::Spec::Translator.new
-  #   dir = RAILS_ROOT + '/spec'
-  #   translator.translate(dir, dir)
-  # end
 
   # Setup specs for stats
   task :statsetup do
