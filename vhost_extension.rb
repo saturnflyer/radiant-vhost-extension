@@ -87,13 +87,25 @@ class VhostExtension < Radiant::Extension
     controllers = ['ApplicationController']
     controllers.concat ApplicationController.subclasses
     controllers.each do |controller| controller.constantize.send :include, SiteScope end
-  
+    
     VhostExtension.MODELS.each do |model|
       # Instantiate the ScopedAccess filter for each model
       controllers.each do |controller| controller.constantize.send :prepend_around_filter, ScopedAccess::Filter.new(model.constantize, :site_scope) end
-      # Enable class level calls like 'Layout.class.current_site' for each model (overkill?)
-      model.constantize.send :cattr_accessor, :current_site
-      model.constantize.send :include, Vhost::SiteScopedModelExtensions
+      scoper = lambda {|m|
+        # Enable class level calls like 'Layout.class.current_site' for each model (overkill?)
+        m.constantize.send :cattr_accessor, :current_site
+        m.constantize.send :extend, Vhost::SiteScopedModelExtensions::ClassMethods
+        m.constantize.send :include, Vhost::SiteScopedModelExtensions::InstanceMethods
+      }
+      model_config = VhostExtension.read_config[:model_uniqueness_validations][model]
+      scoper.call(model)
+      # Set any single table inheritance classes from the config file
+      if model_config['sti_classes']
+        model_config['sti_classes'].each do |klass|
+          scoper.call(klass)
+          controllers.each do |controller| controller.constantize.send :prepend_around_filter, ScopedAccess::Filter.new(klass.constantize, :site_scope) end
+        end
+      end
     end
     # Enable instance level calls like 'my_layout.current_site' for each model (overkill?)
     controllers.each do |controller| controller.constantize.send :before_filter, :set_site_scope_in_models end
