@@ -14,6 +14,7 @@ module SiteScope
     host.gsub!(/^www\./, '')
     @current_site ||=  Site.find_by_hostname(host) || Site.find_by_hostname('*') || Site.find(:first, :conditions => ["hostname LIKE ?", "%#{host}%"])
     raise "No site found to match #{host}." unless @current_site
+    Thread.current[:current_site_id] = @current_site.id
     @current_site
   end
 
@@ -44,8 +45,18 @@ module SiteScope
   # Should this really be here? Shouldn't we be calling this regardless of if we go
   # through the ApplicationControllers :before_filter?
   def set_site_scope_in_models
-    VhostExtension.MODELS.each do |model|
+    set_model_current_site = lambda {|model|
+      model.constantize.send :cattr_accessor, :current_site
       model.constantize.current_site = self.current_site
+    }
+    VhostExtension.MODELS.each do |model|
+      model_config = VhostExtension.read_config[:model_uniqueness_validations][model]
+      if model_config['sti_classes']
+        model_config['sti_classes'].each do |klass|
+          set_model_current_site.call(klass)
+        end
+      end
+      set_model_current_site.call(model)
     end
     Site.send :cattr_accessor, :current_site
     Site.current_site = self.current_site
