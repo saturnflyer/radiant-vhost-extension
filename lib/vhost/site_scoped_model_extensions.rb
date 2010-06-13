@@ -1,23 +1,26 @@
 require 'yaml'
 module Vhost::SiteScopedModelExtensions
-  def self.included(base)
-    base.class_eval {
-      Rails.logger.debug("Applying SiteScope to '"+self.name+"'")
-      base.extend(ClassMethods)
+  module InstanceMethods
+    def self.included(base)
+      base.class_eval {
+        Rails.logger.debug("Applying SiteScope to '"+self.name+"'")
       
-      self.clear_callbacks_by_calling_method_name(:validate, :validates_uniqueness_of)
-      validates_presence_of :site_id
-      belongs_to :site
+        self.clear_callbacks_by_calling_method_name(:validate, :validates_uniqueness_of)
+        validates_presence_of :site_id
+        belongs_to :site
 
-      # Parse the model_uniqueness_validations config and set any necessary validations
-      # If the current class name matches an entry in the config then process it
-      config = VhostExtension.MODEL_UNIQUENESS_VALIDATIONS[self.name]
-      unless config.nil?
-        config.each_pair do |attr, params|
-          validates_uniqueness_of attr.to_sym, params.symbolize_keys
+        # Parse the model_uniqueness_validations config and set any necessary validations
+        # If the current class name matches an entry in the config then process it
+        config = VhostExtension.MODEL_UNIQUENESS_VALIDATIONS[self.name]
+        unless config.nil?
+          config.each_pair do |attr, params|
+            unless attr == 'sti_classes'
+              validates_uniqueness_of attr.to_sym, params.symbolize_keys
+            end
+          end
         end
-      end
-    }
+      }
+    end
   end
   module ClassMethods
     def clear_callbacks_by_calling_method_name(kind, calling_method_name)
