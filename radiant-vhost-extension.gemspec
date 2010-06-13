@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-vhost-extension}
-  s.version = "2.1.0"
+  s.version = "2.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Garber", "Kaleb Walton", "Jim Gay"]
@@ -53,6 +53,7 @@ Gem::Specification.new do |s|
      "lib/vhost/radiant_cache_extensions.rb",
      "lib/vhost/site_scoped_model_extensions.rb",
      "lib/vhost_default_config.yml",
+     "radiant-vhost-extension.gemspec",
      "spec/controllers/admin/pages_controller_spec.rb",
      "spec/controllers/admin/sites_controller_spec.rb",
      "spec/controllers/site_controller_spec.rb",
@@ -83,6 +84,27 @@ Gem::Specification.new do |s|
      "test/helpers/page_part_test_helper.rb",
      "test/test_helper.rb",
      "test/unit/site_test.rb",
+     "vendor/scoped_access/README",
+     "vendor/scoped_access/Rakefile",
+     "vendor/scoped_access/init.rb",
+     "vendor/scoped_access/install.rb",
+     "vendor/scoped_access/lib/scoped_access.rb",
+     "vendor/scoped_access/scoped_access.gemspec",
+     "vendor/scoped_access/tasks/scoped_access_tasks.rake",
+     "vendor/scoped_access/test/database.yml",
+     "vendor/scoped_access/test/filter_test.rb",
+     "vendor/scoped_access/test/fixtures/favorite.rb",
+     "vendor/scoped_access/test/fixtures/favorites.yml",
+     "vendor/scoped_access/test/fixtures/group.rb",
+     "vendor/scoped_access/test/fixtures/groups.yml",
+     "vendor/scoped_access/test/fixtures/member.rb",
+     "vendor/scoped_access/test/fixtures/members.yml",
+     "vendor/scoped_access/test/fixtures/song.rb",
+     "vendor/scoped_access/test/method_scoping_test.rb",
+     "vendor/scoped_access/test/schema.rb",
+     "vendor/scoped_access/test/scoped_access_test.rb",
+     "vendor/scoped_access/test/sql_condition_test.rb",
+     "vendor/scoped_access/test/test_helper.rb",
      "vhost_extension.rb"
   ]
   s.homepage = %q{http://github.com/saturnflyer/radiant-vhost-extension}
