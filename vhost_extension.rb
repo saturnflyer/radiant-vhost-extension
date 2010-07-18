@@ -140,12 +140,12 @@ class VhostExtension < Radiant::Extension
     returning OpenStruct.new do |site|
       site.edit = Radiant::AdminUI::RegionSet.new do |edit|
         edit.main.concat %w{edit_header edit_form}
-        edit.form.concat %w{edit_hostname edit_users}
+        edit.form.concat %w{edit_title edit_hostname edit_users}
         edit.form_bottom.concat %w{edit_buttons}
       end
       site.new = Radiant::AdminUI::RegionSet.new do |new|
         new.main.concat %w{edit_header edit_form}
-        new.form.concat %w{edit_hostname edit_users}
+        new.form.concat %w{edit_title edit_hostname edit_users}
         new.form_bottom.concat %w{edit_buttons}
       end
     end

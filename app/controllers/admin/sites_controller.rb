@@ -4,6 +4,10 @@ class Admin::SitesController < Admin::ResourceController
     :denied_url => { :controller => 'pages', :action => 'index' },
     :denied_message => 'You must have administrative privileges to perform this action.'
     
+  def new
+    model.hostnames.build
+  end
+    
   def switch_to
     site = Site.find(params[:id])
     if site
@@ -11,6 +15,16 @@ class Admin::SitesController < Admin::ResourceController
     else
       render :index
     end 
+  end
+  
+  private
+
+  def load_model
+    self.model = if params[:id]
+      model_class.find(params[:id], :include => [:hostnames])
+    else
+      model_class.new
+    end
   end
 
 end

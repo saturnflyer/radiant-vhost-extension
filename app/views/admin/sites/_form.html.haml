@@ -2,10 +2,14 @@
   = render_region :form_top
   .form-area
     - render_region :form do |form|
+      - form.edit_title do
+        %p.title
+          = f.label :title
+          = f.text_field :title, :class => 'textbox', :maxlength => 100
       - form.edit_hostname do
-        %p.hostname
-          %label{:for=>"site_hostname"} Hostname
-          = f.text_field "hostname", :class => 'textbox', :maxlength => 100
+        #hostnames
+          - f.fields_for :hostnames do |fields|
+            = render 'admin/hostnames/hostname', :fields => fields, :collection => @site.hostnames
       - form.edit_users do
         %p.users
           %label{:for=>"site_users"} Users

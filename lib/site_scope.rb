@@ -12,8 +12,7 @@ module SiteScope
     # Remove the 'www.' from the site so we don't have to always include a www. 
     # in addition to the regular domain name.
     host.gsub!(/^www\./, '')
-    @current_site ||=  Site.find_by_hostname(host) || Site.find_by_hostname('*') || Site.find(:first, :conditions => ["hostname LIKE ?", "%#{host}%"])
-    raise "No site found to match #{host}." unless @current_site
+    @current_site ||= Hostname.find_by_domain(host).try(:site) || Hostname.find_by_domain('*').try(:site) || begin Hostname.find(:first, :conditions => ["hostname LIKE ?", "%#{host}%"]) rescue raise "No site found to match #{host}." unless @current_site end
     Thread.current[:current_site_id] = @current_site.id
     @current_site
   end

@@ -1,8 +1,26 @@
 class Site < ActiveRecord::Base
   has_and_belongs_to_many :users
   has_many :pages
+  has_many :hostnames
+  
+  serialize :config
+  
+  def title=(val)
+    self.config ||= {}
+    self.config['title'] = val
+  end
+  
+  def title
+    self.config ||= {}
+    self.config['title']
+  end
+  
+  def hostname=(val)
+    hostnames.first.update_attributes(:domain => val)
+  end
   
   accepts_nested_attributes_for :users
+  accepts_nested_attributes_for :hostnames, :allow_destroy => true
   VhostExtension.MODELS.each do |model|
     has_many model.tableize.to_sym unless model.tableize.match(/pages|users/) # unless already defined
   end

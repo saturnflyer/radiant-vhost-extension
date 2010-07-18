@@ -11,7 +11,7 @@
         - for site in @sites
           %tr.node.level-1
             %td.site
-              = link_to site.hostname, edit_admin_site_url(:id => site)
+              = link_to site.config['title'], edit_admin_site_url(:id => site)
             %td.site
               = link_to 'Go', switch_to_admin_site_url(site)
             %td.users= site.users.collect(&:name).join(', ')
