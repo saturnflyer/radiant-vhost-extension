@@ -3,8 +3,6 @@ module Vhost::SiteScopedModelExtensions
   module InstanceMethods
     def self.included(base)
       base.class_eval {
-        Rails.logger.debug("Applying SiteScope to '"+self.name+"'")
-      
         self.clear_callbacks_by_calling_method_name(:validate, :validates_uniqueness_of)
         validates_presence_of :site_id
         belongs_to :site
