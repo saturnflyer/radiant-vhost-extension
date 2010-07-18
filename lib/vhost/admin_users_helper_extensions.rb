@@ -2,7 +2,7 @@ module Vhost::AdminUsersHelperExtensions
   def self.included(receiver)
     receiver.send :alias_method_chain, :roles, :site_admin
     receiver.send :define_method, :sites do |user|
-      sites = user.sites.collect{|site| site.hostname}
+      sites = user.sites.collect{|site| site.title}
       sites.join("<br/>")
     end
   end

@@ -10,6 +10,6 @@ module Vhost::ApplicationHelperExtensions
   end
   
   def subtitle_with_site_hostname
-    current_site.hostname
+    current_site.title
   end
 end

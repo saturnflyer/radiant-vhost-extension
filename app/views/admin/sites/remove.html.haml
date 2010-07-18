@@ -9,8 +9,8 @@
   %tbody
     %tr.node.level-1
       %td.site 
-        = image('page', :alt => "page-icon")
-        = @site.hostname
+        = @site.title
+        = %{(#{@site.hostnames.map(&:domain).join(', ')})}
 
 - form_for [:admin, @site], :html => {:method => :delete} do
   %p.buttons

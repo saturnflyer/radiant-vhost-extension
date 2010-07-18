@@ -9,14 +9,14 @@ module Vhost::ApplicationControllerExtensions
         if VhostExtension.REDIRECT_TO_PRIMARY_SITE
           site = current_site
           return if site.nil? || site.hostname.include?("*")
-          primary_host = site.hostname.split(',')[0].strip
+          primary_host = site.hostnames.first.domain
           redirect_to(primary_site_url + request.request_uri) if request.host != primary_host
         end
       end
 
       def primary_site_url
           site = current_site
-          return nil if site.nil? || site.hostname.include?("*")
+          return nil if site.nil? || site.hostnames.map(&:domain).include?("*")
 
           # Rebuild the current URL. Check if it matches the URL of the
           # primary site and redirect if it does not.
@@ -25,7 +25,7 @@ module Vhost::ApplicationControllerExtensions
           port = request.port_string
 
           # Primary site is the first site
-          primary_host = site.hostname.split(',')[0].strip
+          primary_host = site.hostnames.first.domain
           
           # Return the concatenation
           prefix+primary_host+port

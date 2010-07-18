@@ -4,7 +4,7 @@ describe Admin::PagesController do
   dataset :sites_site_users_and_site_pages
   
   before :each do
-    VhostExtension.HOST = sites(:site_a).hostname # Pretend we're connected to site_a so the SiteScope works right
+    VhostExtension.HOST = sites(:site_a).hostnames.first.domain # Pretend we're connected to site_a so the SiteScope works right
     rescue_action_in_public!  # ActionController::TestCase no longer considers this request a local request
 
     # don't bork results with stale cache items
