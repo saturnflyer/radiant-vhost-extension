@@ -5,24 +5,26 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-vhost-extension}
-  s.version = "2.2.0"
+  s.version = "2.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Garber", "Kaleb Walton", "Jim Gay"]
-  s.date = %q{2010-06-13}
+  s.date = %q{2010-07-17}
   s.description = %q{Host more than one site in a single instance of Radiant.}
   s.email = %q{jim@saturnflyer.com}
   s.extra_rdoc_files = [
-    "README"
+    "README.md"
   ]
   s.files = [
     ".gitmodules",
-     "README",
+     "README.md",
      "Rakefile",
      "VERSION",
      "app/controllers/admin/sites_controller.rb",
+     "app/models/hostname.rb",
      "app/models/site.rb",
      "app/models/site_association_observer.rb",
+     "app/views/admin/hostnames/_hostname.html.haml",
      "app/views/admin/sites/_form.html.haml",
      "app/views/admin/sites/edit.html.haml",
      "app/views/admin/sites/index.html.haml",
@@ -32,13 +34,20 @@ Gem::Specification.new do |s|
      "app/views/admin/users/_site_admin_roles.html.haml",
      "app/views/admin/users/_sites_td.html.haml",
      "app/views/admin/users/_sites_th.html.haml",
+     "config/locales/en.yml",
      "config/routes.rb",
+     "cucumber.yml",
      "db/migrate/001_create_sites.rb",
      "db/migrate/002_add_sites_users.rb",
      "db/migrate/003_replace_snippet_name_unique_index.rb",
      "db/migrate/004_add_site_admin_to_users.rb",
+     "db/migrate/20100716175246_add_config_to_sites.rb",
+     "db/migrate/20100716180924_create_hostnames.rb",
+     "db/migrate/20100718021117_remove_site_hostname_field.rb",
      "db/templates/empty.yml",
      "db/templates/simple-blog.yml",
+     "features/support/env.rb",
+     "features/support/paths.rb",
      "lib/bootstrap_with_site_id.rb",
      "lib/radiant-vhost-extension.rb",
      "lib/site_scope.rb",
@@ -53,6 +62,7 @@ Gem::Specification.new do |s|
      "lib/vhost/radiant_cache_extensions.rb",
      "lib/vhost/site_scoped_model_extensions.rb",
      "lib/vhost_default_config.yml",
+     "public/javascripts/admin/vhost.js",
      "radiant-vhost-extension.gemspec",
      "spec/controllers/admin/pages_controller_spec.rb",
      "spec/controllers/admin/sites_controller_spec.rb",
