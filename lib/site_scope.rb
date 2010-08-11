@@ -49,12 +49,6 @@ module SiteScope
       model.constantize.current_site = self.current_site
     }
     VhostExtension.MODELS.each do |model|
-      model_config = VhostExtension.read_config[:model_uniqueness_validations][model]
-      if model_config['sti_classes']
-        model_config['sti_classes'].each do |klass|
-          set_model_current_site.call(klass)
-        end
-      end
       set_model_current_site.call(model)
     end
     Site.send :cattr_accessor, :current_site

@@ -39,14 +39,14 @@ class VhostExtension < Radiant::Extension
     # Enable quick SiteScoping of other Models via vhost.yml config file
     default_config = YAML.load(ERB.new(File.read(File.dirname(__FILE__) + '/lib/vhost_default_config.yml')).result).symbolize_keys
     begin
-      custom_config = YAML.load(ERB.new(File.read(RAILS_ROOT + '/config/vhost.yml')).result).symbolize_keys rescue nil
-      default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].nil?
-      default_config[:redirect_to_primary_site] = custom_config[:redirect_to_primary_site] unless custom_config[:redirect_to_primary_site].nil?
-    rescue
+      vhost_config_path = RAILS_ROOT + '/config/vhost.yml'
+      custom_config = YAML.load(ERB.new(File.read(vhost_config_path)).result).symbolize_keys rescue nil
+      default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].blank?
+      default_config[:redirect_to_primary_site] = custom_config[:redirect_to_primary_site] unless custom_config[:redirect_to_primary_site].blank?
     end
     config = {}
     config[:redirect_to_primary_site] = default_config[:redirect_to_primary_site]
-    config[:models] = default_config[:models].collect{|key,val| key.to_s}
+    config[:models] = default_config[:models].keys
     config[:model_uniqueness_validations] = default_config[:models]
     config
   end
@@ -76,39 +76,49 @@ class VhostExtension < Radiant::Extension
     
     # Set the MODELS and MODEL_VALIDATIONS class variables so everything else can access it
     VhostExtension.MODELS = config[:models]
+    config[:model_uniqueness_validations].each do |m|
+      mklass = m[0].constantize
+      mklass.load_subclasses if mklass.respond_to?(:load_subclasses)
+      mklass.descendants.each do |desc|
+        VhostExtension.MODELS << desc.to_s
+      end
+      VhostExtension.MODELS << m[1]['sti_classes'] unless m[1]['sti_classes'].blank?
+    end
+    VhostExtension.MODELS.flatten!.uniq!
     VhostExtension.MODEL_UNIQUENESS_VALIDATIONS = config[:model_uniqueness_validations]
   end
   
-  def init_scoped_access
-    # Configure the ScopedAccess stuff to scope models to Sites
-    # Unfortunately adding the filters to the ApplicationController isn't enough
-    # they need to also be added to all of the subclasses (which, surprisingly
-    # only shows as the Admin::PagesController and Admin::ResourceController)
-    controllers = ['ApplicationController']
-    controllers.concat ApplicationController.subclasses
-    controllers.each do |controller| controller.constantize.send :include, SiteScope end
-    
-    VhostExtension.MODELS.each do |model|
-      # Instantiate the ScopedAccess filter for each model
-      controllers.each do |controller| controller.constantize.send :prepend_around_filter, ScopedAccess::Filter.new(model.constantize, :site_scope) end
-      scoper = lambda {|m|
-        # Enable class level calls like 'Layout.class.current_site' for each model (overkill?)
-        m.constantize.send :cattr_accessor, :current_site
-        m.constantize.send :extend, Vhost::SiteScopedModelExtensions::ClassMethods
-        m.constantize.send :include, Vhost::SiteScopedModelExtensions::InstanceMethods
-      }
-      model_config = VhostExtension.read_config[:model_uniqueness_validations][model]
-      scoper.call(model)
-      # Set any single table inheritance classes from the config file
-      if model_config['sti_classes']
-        model_config['sti_classes'].each do |klass|
-          scoper.call(klass)
-          controllers.each do |controller| controller.constantize.send :prepend_around_filter, ScopedAccess::Filter.new(klass.constantize, :site_scope) end
+  def init_scoped_access  
+    controllers = []    
+    # load all controllers
+    ([RADIANT_ROOT] + Radiant::Extension.descendants.map(&:root)).each do |path|
+      Dir["#{path}/app/controllers/**/*.rb"].each do |controller|
+        controller_class = controller.sub("#{path}/app/controllers/",'').sub(/\.rb$/,'').camelize
+        begin
+          controllers << controller_class.constantize
+        rescue
+          Rails.logger.info "#{controller} could not be loaded"
         end
       end
+    end 
+    
+    VhostExtension.MODELS.each do |vmodel|
+      controllers.each do |controller| controller.send :prepend_around_filter, ScopedAccess::Filter.new(vmodel.constantize, :site_scope) end
+      klass = vmodel.constantize
+      klass.class_eval {
+        cattr_accessor :current_site
+        extend Vhost::SiteScopedModelExtensions::ClassMethods
+        include Vhost::SiteScopedModelExtensions::InstanceMethods
+      }
     end
-    # Enable instance level calls like 'my_layout.current_site' for each model (overkill?)
-    controllers.each do |controller| controller.constantize.send :before_filter, :set_site_scope_in_models end
+    
+    ApplicationController.class_eval {
+      include SiteScope
+      before_filter :set_site_scope_in_models
+    }
+    
+    # # Enable instance level calls like 'my_layout.current_site' for each model (overkill?)
+    controllers.each do |controller| controller.send :before_filter, :set_site_scope_in_models end
 
     # Wrap UsersController with site scoping for Site Admins
     Admin::UsersController.send :prepend_around_filter, ScopedAccess::Filter.new(User, :users_site_scope)
