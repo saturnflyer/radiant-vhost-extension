@@ -1,7 +1,7 @@
 class Site < ActiveRecord::Base
   has_and_belongs_to_many :users
   has_many :pages
-  has_many :hostnames
+  has_many :hostnames, :dependent => :destroy
   
   serialize :config
   
