@@ -14,7 +14,19 @@ and manage website content by logging into each domain.
 
 ## INSTRUCTIONS
 
+ The New way:
+
     gem install radiant-vhost-extension
+    # add the following line to your config/environment.rb: config.gem 'radiant-vhost-extension', :lib => false
+    rake radiant:extensions:vhost:update
+    rake radiant:extensions:vhost:migrate
+
+ The old way:
+
+    git clone git://github.com/saturnflyer/radiant-vhost-extension.git vendor/extensions/vhost
+    rake radiant:extensions:vhost:update
+    rake radiant:extensions:vhost:migrate
+
 
 ## VHOST SUPPORT FOR OTHER EXTENSIONS
 
