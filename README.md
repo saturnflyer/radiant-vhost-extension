@@ -12,14 +12,14 @@ and manage website content by logging into each domain.
   standard templates with a modified version of the Simple Blog (i.e. no Styled
   Blog or Coffee template)
 
-## INSTRUCTIONS
+## INSTALL INSTRUCTIONS
 
  The New way:
 
     gem install radiant-vhost-extension
     # add the following line to your config/environment.rb: config.gem 'radiant-vhost-extension', :lib => false
-    rake radiant:extensions:vhost:update
-    rake radiant:extensions:vhost:migrate
+    rake radiant:extensions:update_all
+    rake radiant:extensions:vhost:install
 
  The old way:
 
