@@ -84,7 +84,9 @@ class VhostExtension < Radiant::Extension
       end
       VhostExtension.MODELS << m[1]['sti_classes'] unless m[1]['sti_classes'].blank?
     end
-    VhostExtension.MODELS.flatten!.uniq!
+    #flatten and uniq on self
+    VhostExtension.MODELS.flatten!
+    VhostExtension.MODELS.uniq!
     VhostExtension.MODEL_UNIQUENESS_VALIDATIONS = config[:model_uniqueness_validations]
   end
   
@@ -95,7 +97,7 @@ class VhostExtension < Radiant::Extension
       Dir["#{path}/app/controllers/**/*.rb"].each do |controller|
         controller_class = controller.sub("#{path}/app/controllers/",'').sub(/\.rb$/,'').camelize
         begin
-          controllers << controller_class.constantize
+          controllers << controller_class.constantize if controller_class.constantize.new.is_a?(ApplicationController)
         rescue
           Rails.logger.info "#{controller} could not be loaded"
         end
