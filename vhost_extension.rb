@@ -40,7 +40,7 @@ class VhostExtension < Radiant::Extension
     default_config = YAML.load(ERB.new(File.read(File.dirname(__FILE__) + '/lib/vhost_default_config.yml')).result).symbolize_keys
     begin
       vhost_config_path = RAILS_ROOT + '/config/vhost.yml'
-      custom_config = YAML.load(ERB.new(File.read(vhost_config_path)).result).symbolize_keys rescue nil
+      custom_config = YAML.load(ERB.new(File.read(vhost_config_path)).result).symbolize_keys rescue {}
       default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].blank?
       default_config[:redirect_to_primary_site] = custom_config[:redirect_to_primary_site] unless custom_config[:redirect_to_primary_site].blank?
     end
