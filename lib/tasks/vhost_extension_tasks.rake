@@ -3,7 +3,7 @@ namespace :radiant do
     namespace :vhost do
       
       desc "Prepares Radiant for Vhost"
-      task :install => [:environment, :update, :migrate, :apply_site_scoping]
+      task :install => [:environment, :update, :migrate, :add_default_site, :apply_site_scoping]
       
       desc "Runs the migration of the Vhost extension"
       task :migrate => :environment do
@@ -54,6 +54,12 @@ namespace :radiant do
           other.delete_if { |k,v| !words[k] }         # Remove if not defined in en.yml
           TranslationSupport.write_file(filename, basename, comments, other)
         end
+      end
+      
+      desc "Add a Default site"
+      task :add_default_site => :environment do
+        require "#{File.dirname(__FILE__)}/add_default_site"
+        AddDefaultSite.up
       end
 
       
