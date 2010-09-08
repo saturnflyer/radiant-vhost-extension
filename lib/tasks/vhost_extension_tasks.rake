@@ -33,6 +33,10 @@ namespace :radiant do
             cp file, local_tasks_path, :verbose => false
           end
         end
+        vhost_config_file = RAILS_ROOT + '/config/vhost.yml'
+        unless File.exist?(vhost_config_file)
+          cp VhostExtension.root + '/lib/vhost_default_config.yml', vhost_config_file
+        end
       end  
       
       desc "Syncs all available translations for this ext to the English ext master"
