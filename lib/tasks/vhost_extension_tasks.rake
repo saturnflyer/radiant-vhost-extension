@@ -2,8 +2,8 @@ namespace :radiant do
   namespace :extensions do
     namespace :vhost do
       
-      desc "Prepares your database for Vhost"
-      task :install => [:environment, :migrate, :apply_site_scoping]
+      desc "Prepares Radiant for Vhost"
+      task :install => [:environment, :update, :migrate, :apply_site_scoping]
       
       desc "Runs the migration of the Vhost extension"
       task :migrate => :environment do
