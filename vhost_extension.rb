@@ -47,7 +47,8 @@ class VhostExtension < Radiant::Extension
     config = {}
     config[:redirect_to_primary_site] = default_config[:redirect_to_primary_site]
     config[:models] = default_config[:models].keys
-    config[:model_uniqueness_validations] = default_config[:models]
+    config[:model_uniqueness_validations] = default_config[:models].reject{ |model,settings|
+      settings["validate_uniqueness_method"] && settings["validate_uniqueness_method"] == "none" }
     config
   end
   
