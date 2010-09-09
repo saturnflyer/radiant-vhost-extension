@@ -2,8 +2,8 @@ namespace :radiant do
   namespace :extensions do
     namespace :vhost do
       
-      desc "Prepares your database for Vhost"
-      task :install => [:environment, :migrate, :apply_site_scoping]
+      desc "Prepares Radiant for Vhost"
+      task :install => [:environment, :update, :migrate, :add_default_site, :apply_site_scoping]
       
       desc "Runs the migration of the Vhost extension"
       task :migrate => :environment do
@@ -33,6 +33,10 @@ namespace :radiant do
             cp file, local_tasks_path, :verbose => false
           end
         end
+        vhost_config_file = RAILS_ROOT + '/config/vhost.yml'
+        unless File.exist?(vhost_config_file)
+          cp VhostExtension.root + '/lib/vhost_default_config.yml', vhost_config_file
+        end
       end  
       
       desc "Syncs all available translations for this ext to the English ext master"
@@ -50,6 +54,12 @@ namespace :radiant do
           other.delete_if { |k,v| !words[k] }         # Remove if not defined in en.yml
           TranslationSupport.write_file(filename, basename, comments, other)
         end
+      end
+      
+      desc "Add a Default site"
+      task :add_default_site => :environment do
+        require "#{File.dirname(__FILE__)}/add_default_site"
+        AddDefaultSite.up
       end
 
       
