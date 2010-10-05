@@ -34,7 +34,7 @@ and manage website content by logging into each domain.
     
   This scopes Page, Layout, and Snippet by default under a Site with a Hostname of "*".  
   
-  User scoping is not performed.  The first user with 'admin' set is set to be a site_admin for the default site._
+  User scoping is not performed.  The first user with 'admin' set is set to be a site_admin for the default site.
 
 ## VHOST SUPPORT FOR OTHER EXTENSIONS
 
