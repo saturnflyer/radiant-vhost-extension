@@ -33,22 +33,22 @@ end
   def self.up
     MODELS.each do |model|
       begin
-        puts "Migrations for Model: #{model}"
-        add_column model.tableize, :site_id, :integer
-        model.constantize.update_all "site_id = 1"
-      rescue StandardError => e
-        puts "Migration failed for: #{e.inspect}"
-        # Ignore errors here, they're going to happen when the user
-        # does a 'remigrate'
+        unless model.column_names.include?(:site_id)
+          say "Migrations for Model: #{model}"
+          add_column model.tableize, :site_id, :integer
+          model.constantize.update_all "site_id = 1"
+        end
       end
         # Special case for Snippets to add a proper index
-        if model == 'Snippet'
-          remove_index :snippets, :name => "name"
-          add_index :snippets, [:name, :site_id], :name => "name", :unique => true
-        end
-        if model == 'MetaTag'
-          add_index :meta_tags, [:name, :site_id], :unique => true
-          remove_index :meta_tags, [:name]
+        unless model.column_names.include?(:site_id)
+          if model == 'Snippet'
+            remove_index :snippets, :name => "name"
+            add_index :snippets, [:name, :site_id], :name => "name", :unique => true
+          end
+          if model == 'MetaTag'
+            add_index :meta_tags, [:name, :site_id], :unique => true
+            remove_index :meta_tags, [:name]
+          end
         end
     end
   end
