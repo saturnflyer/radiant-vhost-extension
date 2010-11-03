@@ -33,14 +33,14 @@ end
   def self.up
     MODELS.each do |model|
       begin
-        unless model.column_names.include?(:site_id)
+        unless model.constantize.column_names.include?(:site_id)
           say "Migrations for Model: #{model}"
           add_column model.tableize, :site_id, :integer
           model.constantize.update_all "site_id = 1"
         end
       end
         # Special case for Snippets to add a proper index
-        unless model.column_names.include?(:site_id)
+        unless model.constantize.column_names.include?(:site_id)
           if model == 'Snippet'
             remove_index :snippets, :name => "name"
             add_index :snippets, [:name, :site_id], :name => "name", :unique => true
