@@ -19,4 +19,9 @@ models:
        'name already in use'
      scope:
        site_id
-
+ Asset:
+   title:
+     message:
+       'title already in use'
+     scope:
+       site_id
