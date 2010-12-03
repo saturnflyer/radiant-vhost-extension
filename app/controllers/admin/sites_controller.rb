@@ -11,7 +11,9 @@ class Admin::SitesController < Admin::ResourceController
   def switch_to
     site = Site.find(params[:id])
     if site
-      redirect_to "http://#{site.hostnames.first.domain}#{request.port.to_s == '80' ? '' : ":#{request.port}"}/admin"
+      domain = site.hostnames.first.domain
+      domain = request.host if domain == "*"
+      redirect_to "http://#{domain}#{request.port.to_s == '80' ? '' : ":#{request.port}"}/admin"
     else
       render :index
     end 
