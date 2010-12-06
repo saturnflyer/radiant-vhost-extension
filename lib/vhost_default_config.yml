@@ -20,8 +20,8 @@ models:
      scope:
        site_id
  Asset:
-   title:
+   id:
      message:
-       'title already in use'
+       'id already in use'
      scope:
        site_id
