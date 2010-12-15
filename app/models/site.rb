@@ -16,7 +16,11 @@ class Site < ActiveRecord::Base
   end
   
   def hostname=(val)
-    hostnames.first.update_attributes(:domain => val)
+    hostname = hostnames.first
+    unless hostname
+      hostname = Hostname.new
+    end
+    hostname.update_attributes(:domain => val)
   end
   
   accepts_nested_attributes_for :users
