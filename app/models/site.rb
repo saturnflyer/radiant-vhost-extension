@@ -19,6 +19,7 @@ class Site < ActiveRecord::Base
     hostname = hostnames.first
     unless hostname
       hostname = Hostname.new
+      hostname.site = self
     end
     hostname.update_attributes(:domain => val)
   end
