@@ -29,9 +29,11 @@ module BootstrapWithSiteId
       site_template['records'] = {}
       site_template['records']['Sites'] = template['records']['Sites']
       create_records(site_template)
-      site_template['records'].delete('Sites')
+      template['records'].delete('Sites')
     end
     create_records(template)
+
+    User.first.update_attributes(:site_admin => true)
   end
 
   def find_template_in_path_with_site_id(filename)
