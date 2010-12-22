@@ -1,0 +1,17 @@
+- @page_title = @site.title + ' Domains - ' + default_page_title
+- body_classes << 'edit_site_preferences'
+
+%h1 Site Preferences
+- form_for @site, :url => "/admin/site/edit", :html => { :method => :put, 'data-onsubmit_status' => "Saving Preferences&#8230;" } do |f|
+  .form-area
+    %p.title
+      = f.label :title
+      = f.text_field :title, :class => 'textbox', :maxlength => 100
+    #hostnames
+      - f.fields_for :hostnames do |fields|
+        = render 'admin/hostnames/hostname', :fields => fields, :collection => @site.hostnames
+    %p.buttons
+      = save_model_button @site
+      = t('or')
+      = link_to t('cancel'), admin_url
+- include_javascript 'admin/vhost'

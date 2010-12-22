@@ -2,6 +2,8 @@ class Site < ActiveRecord::Base
   has_and_belongs_to_many :users
   has_many :pages
   has_many :hostnames, :dependent => :destroy
+
+  validates_presence_of :title
   
   serialize :config
   

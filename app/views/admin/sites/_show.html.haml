@@ -1,0 +1,15 @@
+#domains.box  
+  %h3
+    .actions
+      = button_to "Edit Preferences", "/admin/site", :method => :get
+    Site Preferences
+  %p.ruled
+    %label 
+      Title
+    %span
+      = current_site.title
+  %p.ruled
+    %label 
+      Domains
+    %span
+      = current_site.hostnames.collect { |h| h.domain }.join(", ")
