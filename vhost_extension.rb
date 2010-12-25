@@ -145,6 +145,7 @@ class VhostExtension < Radiant::Extension
     Admin::UsersHelper.send :include, Vhost::AdminUsersHelperExtensions
     Admin::UsersController.send :include, Vhost::AdminUsersControllerExtensions
     Admin::ConfigurationController.send :include, Vhost::AdminConfigurationControllerExtensions
+    Admin::ExtensionsController.send :include, Vhost::AdminExtensionsControllerExtensions
     # Prevents a user from Site A logging into Site B's admin area (need a spec
     # for this to ensure it's working)
     Admin::ResourceController.send :include, Vhost::ControllerAccessExtensions
