@@ -3,7 +3,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :sites, :member => {:switch_to => :get}
   end
 
-  map.namespace :admin do |admin|
-    admin.resources :site, :controller => 'site'
+  map.with_options(:controller => "admin/plans") do |plans|
+    plans.gopro 'admin/gopro', :action => 'gopro'
+    plans.signup 'admin/signup', :action => 'signup'
   end
 end

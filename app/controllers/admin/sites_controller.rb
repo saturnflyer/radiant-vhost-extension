@@ -1,9 +1,30 @@
 class Admin::SitesController < Admin::ResourceController
   only_allow_access_to :index, :show, :new, :create, :edit, :update, :remove, :destroy, :switch_to,
-    :when => :site_admin,
+    :when => [:admin, :site_admin],
     :denied_url => { :controller => 'pages', :action => 'index' },
     :denied_message => 'You must have site administrative privileges to perform this action.'
+
+  before_filter :ensure_deletable, :only => [:remove, :destory]
     
+  def index
+    if current_user && current_user.site_admin?
+      @sites = Site.all
+    elsif current_user && current_user.admin?
+      @sites = current_user.sites
+    else
+      @sites = Array.new
+    end
+
+    render
+  end
+
+  def ensure_deletable
+    if current_site.id.to_s == params[:id].to_s
+      announce_cannot_delete_self
+      redirect_to admin_sites_url
+    end
+  end
+
   def new
     model.hostnames.build
   end
@@ -27,6 +48,10 @@ class Admin::SitesController < Admin::ResourceController
     else
       model_class.new
     end
+  end
+
+  def annouce_cannot_delete_self
+    flash[:error] = "You can not delete the current site"
   end
 
 end

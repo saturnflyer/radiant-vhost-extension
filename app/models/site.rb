@@ -7,6 +7,16 @@ class Site < ActiveRecord::Base
   
   serialize :config
   
+  def storage=(val)
+    self.config ||= {}
+    self.config['storage'] = val
+  end
+
+  def storage
+    self.config ||= {}
+    self.config['storage'] || 5242880
+  end
+
   def title=(val)
     self.config ||= {}
     self.config['title'] = val
@@ -39,6 +49,31 @@ class Site < ActiveRecord::Base
   
   def homepage
     self.pages.find(:first, :conditions => {:parent_id => nil})
+  end
+
+  def build_template!
+    path = "#{RAILS_ROOT}/vendor/extensions/vhost/db/templates/client"
+    layout = Layout.new(:name => "Template", :content => File.new("#{path}/layout.html").read)
+    layout.site = self
+    layout.save!
+    home = Page.new_with_defaults
+    home.site = self
+    home.update_attributes!(:title => "Home", :breadcrumb => "Home", :slug => "/", :status => Status[:published], :layout => layout)
+    home.part(:body).update_attributes!(:content => File.new("#{path}/home.html").read)
+    css = StylesheetPage.new_with_defaults
+    css.site = self
+    css.update_attributes!(:slug => "css", :parent => home)
+    js = JavascriptPage.new_with_defaults
+    js.site = self
+    js.update_attributes!(:slug => "js", :parent => home)
+    style = StylesheetPage.new_with_defaults
+    style.site = self
+    style.update_attributes!(:slug => "style.css", :parent => css)
+    style.part(:body).update_attributes!(:content => File.new("#{path}/style.css").read)
+    code = JavascriptPage.new_with_defaults
+    code.site = self
+    code.update_attributes!(:slug => "code.js", :parent => js)
+    code.part(:body).update_attributes!(:content => File.new("#{path}/code.js").read)
   end
 
   def self.find_by_hostname(hostname)

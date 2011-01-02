@@ -37,15 +37,19 @@ class VhostExtension < Radiant::Extension
 
   def self.read_config
     # Enable quick SiteScoping of other Models via vhost.yml config file
+    renv = Rails.env.to_sym
     default_config = YAML.load(ERB.new(File.read(File.dirname(__FILE__) + '/lib/vhost_default_config.yml')).result).symbolize_keys
+    default_config[renv].symbolize_keys!
     begin
       vhost_config_path = RAILS_ROOT + '/config/vhost.yml'
       custom_config = YAML.load(ERB.new(File.read(vhost_config_path)).result).symbolize_keys rescue {}
       default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].blank?
-      default_config[:redirect_to_primary_site] = custom_config[:redirect_to_primary_site] unless custom_config[:redirect_to_primary_site].blank?
+      default_config[renv].merge!(custom_config[renv].symbolize_keys) unless custom_config[renv].blank?
     end
     config = {}
-    config[:redirect_to_primary_site] = default_config[:redirect_to_primary_site]
+    config[:redirect_to_primary_site] = default_config[renv][:redirect_to_primary_site]
+    config[:top_level_domain] = default_config[renv][:top_level_domain]
+    config[:wildcard_session] = default_config[renv][:wildcard_session]
     config[:models] = default_config[:models].keys
     config[:model_uniqueness_validations] = default_config[:models].reject{ |model,settings|
       settings["validate_uniqueness_method"] && settings["validate_uniqueness_method"] == "none" }
@@ -56,15 +60,12 @@ class VhostExtension < Radiant::Extension
 
   def basic_extension_config
     tab "Settings" do
-      add_item "Sites", "/admin/sites"
-      add_item "Site", "/admin/site", :after => "Personal"
+      add_item "Sites", "/admin/sites", :after => "Users"
     end
     admin.user.index.add :thead, 'sites_th', :before => 'modify_header'
     admin.user.index.add :tbody, 'sites_td', :before => 'modify_cell'
     admin.user.edit.add :form, 'admin/users/site_admin_roles', :after => 'edit_roles'
     admin.user.edit.add :form, 'admin/users/edit_sites', :after => 'edit_roles'
-
-    admin.configuration.show.add :box, 'admin/sites/show', :after => 'user'
 
     Radiant::AdminUI.class_eval do
       attr_accessor :sites
@@ -93,6 +94,10 @@ class VhostExtension < Radiant::Extension
     VhostExtension.MODELS.flatten!
     VhostExtension.MODELS.uniq!
     VhostExtension.MODEL_UNIQUENESS_VALIDATIONS = config[:model_uniqueness_validations]
+
+    if config[:wildcard_session] && !config[:top_level_domain].blank?
+      ActionController::Base.session = { :domain => ".#{config[:top_level_domain]}" }
+    end
   end
   
   def init_scoped_access  

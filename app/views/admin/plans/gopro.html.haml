@@ -1,0 +1,56 @@
+- @page_title = 'Plans &amp; Billing - ' + default_page_title
+- body_classes << 'edit_site_plan'
+
+%h1 Plans &amp; Billing
+- form_for @site, :url => "/admin/plans/edit", :html => { :method => :put, 'data-onsubmit_status' => "Saving Plan Options&#8230;" } do |f|
+  .form-area
+    %p
+      %table
+        %tr
+          %th
+            Plan
+          %th
+            Disk Space
+          %th
+            Available Fonts
+        %tr
+          %td
+            Large ($20/year)
+          %td
+            2GB
+          %td
+            100
+          %td
+            Upgrade
+        %tr
+          %td
+            Medium ($15/year)
+          %td
+            1GB
+          %td
+            50
+          %td
+            Upgrade
+        %tr
+          %td
+            Small ($10/year)
+          %td
+            500MB
+          %td
+            25
+          %td
+            Upgrade
+        %tr
+          %td
+            Free ($0/year)
+          %td
+            5MB
+          %td
+            10
+          %td
+            Your Plan
+        
+    %p.buttons
+      = save_model_button @site
+      = t('or')
+      = link_to t('cancel'), admin_url

@@ -10,15 +10,20 @@
       - unless @sites.empty?
         - for site in @sites
           %tr.node.level-1
+            %td.name
+              = link_to image_tag('sites/site.png'), edit_admin_site_url(:id => site), :title => site.title
+              = link_to site.title, edit_admin_site_url(:id => site)
             %td.site
-              = link_to site.config['title'], edit_admin_site_url(:id => site)
-            %td.site
-              = link_to 'Go', switch_to_admin_site_url(site)
+              = link_to 'Switch to', switch_to_admin_site_url(site)
             %td.users= site.users.collect(&:name).join(', ')
-            %td.remove= link_to('Remove Site', remove_admin_site_url(:id => site))
+            %td.actions
+              - if site == current_site
+                %span.action.disabled= image('minus_disabled') + ' ' + t('remove')
+              - else
+                = link_to image('minus') + ' ' + t('remove'), remove_admin_site_url(:id => site), :class => "action"
       - else
         %tr
           %td.note{:colspan=>3} No Sites
 #actions
   %ul
-    %li= link_to 'New Site', new_admin_site_url
+    %li= link_to image('plus') + ' New Site', new_admin_site_url
