@@ -62,8 +62,6 @@ class VhostExtension < Radiant::Extension
     tab "Settings" do
       add_item "Sites", "/admin/sites", :after => "Users"
     end
-    admin.user.index.add :thead, 'sites_th', :before => 'modify_header'
-    admin.user.index.add :tbody, 'sites_td', :before => 'modify_cell'
     admin.user.edit.add :form, 'admin/users/site_admin_roles', :after => 'edit_roles'
     admin.user.edit.add :form, 'admin/users/edit_sites', :after => 'edit_roles'
 

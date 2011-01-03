@@ -1,4 +1,5 @@
-- form_for [:admin, @site] do |f|
+- form_for [:admin, @site],
+  :html => {"data-onsubmit_status"=>(@site.new_record? ? "Creating site&#8230;" : "Saving changes&#8230;")} do |f|
   = render_region :form_top
   .form-area
     - render_region :form do |form|
