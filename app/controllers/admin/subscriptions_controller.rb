@@ -19,7 +19,6 @@ class Admin::SubscriptionsController < ApplicationController
         hostname.save!
 
         site.users << user
-        site.build_template!
 
         self.current_user = user
       elsif user.errors.length > 0

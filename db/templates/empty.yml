@@ -1,5 +1,5 @@
 name: Empty
-description: Create a empty single page site
+description: Create an empty site
 records:
   Sites:
     main:
@@ -7,53 +7,3 @@ records:
       hostname: '*'
       config:
         title: 'Default'
-  Layouts:
-    main:
-      id: 1
-      site_id: 1
-      name: Template
-      content: |
-        <!doctype html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <title><r:title /></title>
-        </head>
-        <body>
-          <r:content />
-        </body>
-        </html>
-  Pages:
-    home_page:
-      id: 1
-      site_id: 1
-      title: Home Page
-      breadcrumb: Home
-      slug: /
-      layout_id: 1
-      status_id: 100
-    css:
-      id: 2
-      site_id: 1
-      title: css
-      breadcrumb: css
-      slug: css
-      parent_id: 1
-      status_id: 100
-      class_name: StylesheetPage
-    js:
-      id: 3
-      site_id: 1
-      title: js
-      breadcrumb: js
-      slug: js
-      parent_id: 1
-      status_id: 100    
-      class_name: JavascriptPage
-  PageParts:
-    home_page:
-      id: 1
-      name: body
-      page_id: 1
-      content: |
-        <p>Pretty empty, time to <a href="/admin">change</a> that.</p>

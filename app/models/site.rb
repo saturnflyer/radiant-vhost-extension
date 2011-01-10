@@ -6,6 +6,8 @@ class Site < ActiveRecord::Base
   validates_presence_of :title
   
   serialize :config
+
+  after_create :build_template
   
   def expires=(val)
     self.config ||= {}
@@ -61,7 +63,17 @@ class Site < ActiveRecord::Base
     self.pages.find(:first, :conditions => {:parent_id => nil})
   end
 
-  def build_template!
+  def self.find_by_hostname(hostname)
+    # allow vhost to be added to existing sites
+    if Site.count == 0
+      Site.create!(:hostname => hostname)
+    end
+    self.find(:first, :conditions => ["hostname LIKE ?", "%#{hostname}%"])
+  end
+
+  private
+
+  def build_template
     path = "#{RAILS_ROOT}/vendor/extensions/vhost/db/templates/client"
     layout = Layout.new(:name => "Template", :content => File.new("#{path}/layout.html").read)
     layout.site = self
@@ -86,11 +98,4 @@ class Site < ActiveRecord::Base
     code.part(:body).update_attributes!(:content => File.new("#{path}/code.js").read)
   end
 
-  def self.find_by_hostname(hostname)
-    # allow vhost to be added to existing sites
-    if Site.count == 0
-      Site.create!(:hostname => hostname)
-    end
-    self.find(:first, :conditions => ["hostname LIKE ?", "%#{hostname}%"])
-  end
 end
