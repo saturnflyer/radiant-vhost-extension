@@ -33,7 +33,7 @@ class Admin::SitesController < Admin::ResourceController
     site = Site.find(params[:id])
     if site
       domain = site.hostnames.first.domain
-      domain = request.host if domain == "*"
+      domain = request.domain if domain == "*"
       redirect_to "http://#{domain}#{request.port.to_s == '80' ? '' : ":#{request.port}"}/admin"
     else
       render :index
