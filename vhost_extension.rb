@@ -65,6 +65,9 @@ class VhostExtension < Radiant::Extension
     admin.user.edit.add :form, 'admin/users/site_admin_roles', :after => 'edit_roles'
     admin.user.edit.add :form, 'admin/users/edit_sites', :after => 'edit_roles'
 
+    admin.configuration.show.config.clear
+    admin.configuration.show.config << "admin/subscriptions/show"
+
     Radiant::AdminUI.class_eval do
       attr_accessor :sites
     end

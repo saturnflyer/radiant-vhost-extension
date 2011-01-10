@@ -7,6 +7,16 @@ class Site < ActiveRecord::Base
   
   serialize :config
   
+  def expires=(val)
+    self.config ||= {}
+    self.config['expires'] = val
+  end
+
+  def expires
+    self.config ||= {}
+    self.config['expires']
+  end
+
   def storage=(val)
     self.config ||= {}
     self.config['storage'] = val
@@ -14,7 +24,7 @@ class Site < ActiveRecord::Base
 
   def storage
     self.config ||= {}
-    self.config['storage'] || 5242880
+    self.config['storage'] || 52428800
   end
 
   def title=(val)

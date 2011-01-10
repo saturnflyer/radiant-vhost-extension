@@ -1,13 +1,5 @@
-class Admin::PlansController < ApplicationController
-  no_login_required
-  skip_before_filter :verify_authenticity_token
-
-  def gopro
-    if request.post?
-      
-    end
-    
-  end
+class Admin::SubscriptionsController < ApplicationController
+  skip_before_filter :authenticate, :authorize, :verify_authenticity_token, :only => :signup
 
   def signup
     if request.post?
@@ -29,8 +21,7 @@ class Admin::PlansController < ApplicationController
         site.users << user
         site.build_template!
 
-        current_user = user
-        redirect_to switch_to_admin_site_url(site)
+        self.current_user = user
       elsif user.errors.length > 0
         flash.now[:error] = "Please check #{user.errors.first[0]}, #{user.errors.first[1]}"
       elsif hostname.errors.length > 0
@@ -40,6 +31,9 @@ class Admin::PlansController < ApplicationController
       else
         flash.new[:error] = "Unable to save your information, please try again"
       end
+    end
+    if self.current_user
+      redirect_to switch_to_admin_site_url(self.current_user.sites.first || current_site)
     end
   end
 
