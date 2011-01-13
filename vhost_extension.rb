@@ -48,8 +48,6 @@ class VhostExtension < Radiant::Extension
     end
     config = {}
     config[:redirect_to_primary_site] = default_config[renv][:redirect_to_primary_site]
-    config[:top_level_domain] = default_config[renv][:top_level_domain]
-    config[:wildcard_session] = default_config[renv][:wildcard_session]
     config[:models] = default_config[:models].keys
     config[:model_uniqueness_validations] = default_config[:models].reject{ |model,settings|
       settings["validate_uniqueness_method"] && settings["validate_uniqueness_method"] == "none" }
@@ -95,10 +93,6 @@ class VhostExtension < Radiant::Extension
     VhostExtension.MODELS.flatten!
     VhostExtension.MODELS.uniq!
     VhostExtension.MODEL_UNIQUENESS_VALIDATIONS = config[:model_uniqueness_validations]
-
-    if config[:wildcard_session] && !config[:top_level_domain].blank?
-      ActionController::Base.session = { :domain => ".#{config[:top_level_domain]}" }
-    end
   end
   
   def init_scoped_access  

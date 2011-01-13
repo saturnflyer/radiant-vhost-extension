@@ -1,15 +1,9 @@
 production:
-  top_level_domain: kuviat.com
   redirect_to_primary_site: false
-  wildcard_session: true
 test:
-  top_level_domain: test.com
   redirect_to_primary_site: false
-  wildcard_session: false
 development:
-  top_level_domain: development.com
   redirect_to_primary_site: false
-  wildcard_session: false
 
 models:
  Layout:
