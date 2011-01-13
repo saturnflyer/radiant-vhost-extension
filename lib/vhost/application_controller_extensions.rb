@@ -8,7 +8,7 @@ module Vhost::ApplicationControllerExtensions
       def redirect_to_primary_site
         if VhostExtension.REDIRECT_TO_PRIMARY_SITE
           site = current_site
-          return if site.nil? || site.hostname.include?("*")
+          return if site.nil? || site.hostnames.map(&:domain).include?("*") || site.hostnames.map(&:domain).include?(request.host)
           primary_host = site.hostnames.first.domain
           redirect_to(primary_site_url + request.request_uri) if request.host != primary_host
         end
