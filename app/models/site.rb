@@ -26,7 +26,7 @@ class Site < ActiveRecord::Base
 
   def storage
     self.config ||= {}
-    self.config['storage'] || 52428800
+    self.config['storage'] || 5242880
   end
 
   def title=(val)

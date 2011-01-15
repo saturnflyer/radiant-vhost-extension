@@ -151,6 +151,7 @@ class VhostExtension < Radiant::Extension
     Admin::ResourceController.send :include, Vhost::ControllerAccessExtensions
     Admin::PagesController.send :include, Vhost::ControllerAccessExtensions 
     ApplicationController.send :include, Vhost::ApplicationControllerExtensions 
+    ActionController.send :include, Vhost::ActionControllerExtensions
   end
 
   # Defines this extension's default regions (so that we can incorporate shards
