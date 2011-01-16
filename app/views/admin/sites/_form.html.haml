@@ -19,6 +19,11 @@
         - else
           = f.hidden_field :user_ids, :name => 'site[user_ids][]', :value => current_user.id
   - render_region :form_bottom do |form_bottom|
+    %fieldset
+      %h3
+        Custom Domain Setup
+      %p
+        You must create an &ldquo;A Record&rdquo; that points to 50.16.234.252 for custom domains
     - form_bottom.edit_buttons do
       %p.buttons
         = save_model_button(@site)
