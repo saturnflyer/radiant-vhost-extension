@@ -2,8 +2,8 @@ class Hostname < ActiveRecord::Base
   belongs_to :site
 
   validates_each :domain do |record, attr, value|
-    good_so_far = true
-    unless value == "*"
+    good_so_far = !value.nil?
+    if good_so_far && value != "*"
       value.split('.').each do |addr|
         good_so_far = addr =~ /^[a-z0-9-]+$/
         break unless good_so_far

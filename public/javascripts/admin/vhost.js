@@ -15,9 +15,9 @@ document.observe('dom:loaded',function(){
   
 	$$('p.hostname').each(function(item, index){ 
 		if (index == 0) {
-			item.down('input.domain').setAttribute('disabled', 'disabled');
+				item.down('input.domain').setAttribute('readonly', 'readonly');
 		}	else {
-			item.insert({ 
+				item.insert({ 
 				bottom: new Element('img', {src: '/images/admin/minus.png', className: 'domain_remover'})
 			}); 
 		}
@@ -28,13 +28,13 @@ document.observe('dom:loaded',function(){
     '#add_domain:click': function(){  
       var new_hostname = $$('#hostnames p.hostname')[0].cloneNode(true)
       var label = $(new_hostname).down('label'); $(label).writeAttribute('id','')
-			var input = $(new_hostname).down('input.domain'); $(input).writeAttribute('id',''); $(input).removeAttribute('disabled'); $(input).value = ''
+			var input = $(new_hostname).down('input.domain'); $(input).writeAttribute('id',''); $(input).removeAttribute('readonly'); $(input).value = ''
       var destroy = $(new_hostname).down('input.delete_input').remove();
       var new_hostname_id = $(input).identify();
 			new_hostname.insert({ 
 				bottom: new Element('img', {src: '/images/admin/minus.png', className: 'domain_remover'})
 			}); 
-      $(label).writeAttribute('for',new_hostname_id)
+      $(label).writeAttribute('for', new_hostname_id)
       $(input).writeAttribute('name','site[hostnames_attributes]['+ $$('input[name*=domain]').size() + '][domain]')
       $(input).writeAttribute('value','')
       $('hostnames').insert({bottom: new_hostname})
