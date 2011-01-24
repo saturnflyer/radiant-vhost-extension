@@ -5,7 +5,7 @@ class Hostname < ActiveRecord::Base
     good_so_far = !value.nil?
     if good_so_far && value != "*"
       value.split('.').each do |addr|
-        good_so_far = addr =~ /^[a-z0-9-]+$/
+        good_so_far = addr =~ /^[a-z0-9-]+$/i
         break unless good_so_far
       end    
     end
