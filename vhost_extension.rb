@@ -30,6 +30,7 @@ class VhostExtension < Radiant::Extension
     init_scoped_access
     enable_caching
     modify_classes
+    add_tags
   end
   
   def deactivate
@@ -168,6 +169,12 @@ class VhostExtension < Radiant::Extension
         new.form.concat %w{edit_title edit_hostname edit_users}
         new.form_bottom.concat %w{edit_buttons}
       end
+    end
+  end
+
+  def add_tags
+    Page.class_eval do
+      include VhostTags
     end
   end
   
