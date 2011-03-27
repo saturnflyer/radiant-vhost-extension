@@ -1,4 +1,10 @@
-redirect_to_primary_site: false
+production:
+  redirect_to_primary_site: false
+test:
+  redirect_to_primary_site: false
+development:
+  redirect_to_primary_site: false
+
 models:
  Layout:
    name: 
@@ -19,4 +25,15 @@ models:
        'name already in use'
      scope:
        site_id
-
+ Asset:
+   id:
+     message:
+       'id already in use'
+     scope:
+       site_id
+ ActiveVariant:
+   id:
+     message:
+       'id already in use'
+     scope:
+       site_id

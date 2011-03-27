@@ -2,3 +2,6 @@
   %p
     = f.label :site_ids, 'Sites', :class => "optional"
     ~ f.collection_select :site_ids, current_user.site_admin? ? Site.find(:all) : current_user.sites, :id, :title, {}, :multiple => true, :name => 'user[site_ids][]', :size => '10', :class => "textarea"
+- else
+  %p
+    = f.hidden_field :site_ids, :name => 'user[site_ids][]', :value => current_site.id

@@ -1,0 +1,17 @@
+%h3
+  Site Subscription
+%p.ruled
+  %label
+    Asset Storage
+  %span
+    = number_to_human_size(Asset.sum(:asset_file_size, :conditions => ["site_id = ?", current_site.id])) + " of " + number_to_human_size(current_site.storage) + " used"
+%p.ruled
+  %label
+    Subscription Plan
+  %span
+    = current_site.expires.nil? ? "Free" : "Pro"
+%p.ruled
+  %label
+    Subscription Expires
+  %span
+    = current_site.expires.nil? ? "Never" : current_site.expires

@@ -1,4 +1,5 @@
-- form_for [:admin, @site] do |f|
+- form_for [:admin, @site],
+  :html => {"data-onsubmit_status"=>(@site.new_record? ? "Creating site&#8230;" : "Saving changes&#8230;")} do |f|
   = render_region :form_top
   .form-area
     - render_region :form do |form|
@@ -11,10 +12,18 @@
           - f.fields_for :hostnames do |fields|
             = render 'admin/hostnames/hostname', :fields => fields, :collection => @site.hostnames
       - form.edit_users do
-        %p.users
-          %label{:for=>"site_users"} Users
-          = f.collection_select :user_ids, User.find(:all), :id, :name, {}, :multiple => true, :name => 'site[user_ids][]', :size => '10'
+        - if current_user.site_admin?
+          %p.users
+            %label{:for=>"site_users"} Users
+            = f.collection_select :user_ids, User.find(:all), :id, :name, {}, :multiple => true, :name => 'site[user_ids][]', :size => '10'
+        - else
+          = f.hidden_field :user_ids, :name => 'site[user_ids][]', :value => current_user.id
   - render_region :form_bottom do |form_bottom|
+    %fieldset
+      %h3
+        Custom Domain Setup
+      %p
+        You must create an &ldquo;A Record&rdquo; that points to 50.16.234.252 for custom domains
     - form_bottom.edit_buttons do
       %p.buttons
         = save_model_button(@site)
