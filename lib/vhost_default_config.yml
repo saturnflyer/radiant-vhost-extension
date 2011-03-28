@@ -25,15 +25,3 @@ models:
        'name already in use'
      scope:
        site_id
- Asset:
-   id:
-     message:
-       'id already in use'
-     scope:
-       site_id
- ActiveVariant:
-   id:
-     message:
-       'id already in use'
-     scope:
-       site_id
