@@ -3,6 +3,7 @@ require 'yaml'
 require 'ostruct'
 require_dependency 'application_controller'
 require File.join(File.dirname(__FILE__), 'vendor/scoped_access/lib/scoped_access')
+require 'radiant-vhost-extension'
 
 class VhostExtension < Radiant::Extension
   version "#{File.read(File.expand_path(File.dirname(__FILE__)) + '/VERSION')}"
