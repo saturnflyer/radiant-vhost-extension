@@ -25,7 +25,7 @@ namespace :radiant do
           mkdir_p RAILS_ROOT + directory, :verbose => false
           cp file, RAILS_ROOT + path, :verbose => false
         end
-        unless VhostExtension.root.starts_with? RAILS_ROOT # don't need to copy vendored tasks
+        unless VhostExtension.root.starts_with? File.join(RAILS_ROOT, %w(vendor extensions)) # don't need to copy vendored tasks
           puts "Copying rake tasks from VhostExtension"
           local_tasks_path = File.join(RAILS_ROOT, %w(lib tasks))
           mkdir_p local_tasks_path, :verbose => false
