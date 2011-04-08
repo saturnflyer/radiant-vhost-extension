@@ -1,5 +1,5 @@
 class SitesSiteUsersDataset < Dataset::Base
-  uses :site_users, :sites
+  uses :site_users, :sites, :site_hostnames
   
   def load
     sites(:site_a).users << users(:usera)

@@ -1,5 +1,5 @@
 class SiteUsersDataset < Dataset::Base
-  uses :users
+  uses :users, :site_hostnames
   
   def load
     create_user "UserA"
@@ -36,7 +36,7 @@ class SiteUsersDataset < Dataset::Base
       # Set the Vhost HOST to the first hostname in the sites list for the user.
       # It works for these tests although it may be problematic as we add more
       # rigorous tests that include multi-site users.
-      VhostExtension.HOST = login_user.sites[0].hostname
+      VhostExtension.HOST = login_user.sites[0].hostnames.first.domain
       flunk "Can't login as non-existing user #{user.to_s}." unless login_user
       request.session['user'] = login_user # Added this because it was in the old PagesController tests
       request.session['user_id'] = login_user.id

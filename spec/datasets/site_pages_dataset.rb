@@ -5,15 +5,15 @@ class VirtualPage < Page
 end
 
 class SitePagesDataset < Dataset::Base
-  uses :site_home_pages, :sites
+  uses :site_home_pages, :sites, :site_hostnames
   
   def load
     create_page "Page A", :parent_id => page_id(:home_a), :site_id => site_id(:site_a) do
-      create_page_part "body", :content => "PageA Body", :id => 1
+      create_page_part "body", :content => "PageA Body"
     end
 
     create_page "Page B", :parent_id => page_id(:home_b), :site_id => site_id(:site_b) do
-      create_page_part "body", :content => "PageB Body", :id => 2
+      create_page_part "body", :content => "PageB Body"
     end
 
     create_page "Parent", :parent_id => page_id(:home_a), :site_id => site_id(:site_a) do

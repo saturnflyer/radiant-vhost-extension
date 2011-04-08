@@ -4,7 +4,7 @@ describe Site do
   dataset :site_users
   
   before(:each) do
-    @site = Site.new
+    @site = Site.new(:title => "site")
   end
 
   it "should be valid" do

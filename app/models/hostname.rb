@@ -1,5 +1,6 @@
 class Hostname < ActiveRecord::Base
   belongs_to :site
+  belongs_to :host_type
 
   validates_each :domain do |record, attr, value|
     good_so_far = !value.nil?
