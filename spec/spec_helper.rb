@@ -23,7 +23,7 @@ end
 Dataset::Resolver.default << (File.dirname(__FILE__) + "/datasets")
 
 # Needs to be test.host so the SiteScope works right
-VhostExtension.HOST = "sitea.foo42.com"
+VhostExtension.HOST = "test.host"
 
 Spec::Runner.configure do |config|
   # config.use_transactional_fixtures = true

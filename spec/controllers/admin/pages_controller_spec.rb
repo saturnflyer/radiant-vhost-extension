@@ -52,7 +52,8 @@ describe Admin::PagesController do
         it "should show a missing page (404) for the #{action} action on a page NOT belonging to a site #{user.to_s.humanize} has access to" do
           login_as user
           send method, action, :id => page_id(:page_b)
-          response.should be_missing
+          flash.now[:notice].should == "Page could not be found."
+          response.should be_redirect
         end
       end
     end

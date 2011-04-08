@@ -50,7 +50,7 @@ class Admin::SitesController < Admin::ResourceController
     end
   end
 
-  def annouce_cannot_delete_self
+  def announce_cannot_delete_self
     flash[:error] = "You can not delete the current site"
   end
 

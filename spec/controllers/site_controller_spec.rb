@@ -12,7 +12,7 @@ describe SiteController do
   end
 
   it "should find and render the home page for the #{VhostExtension.HOST} site" do
-    get :show_page, :url => ''
+    get :show_page, :url => '/'
     response.should be_success
     response.body.should == 'Hello A'
   end
