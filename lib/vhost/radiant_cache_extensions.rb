@@ -13,7 +13,9 @@ module Vhost::RadiantCacheExtensions
           Rack::Cache.new(app, {
               :entitystore => "radiant:tmp/cache/entity", 
               :metastore => "radiant:tmp/cache/meta",
-              :verbose => false}.merge(options))
+              :verbose => false,
+              :allow_reload => false,
+              :allow_revalidate => false}.merge(options))
         end
         def self.clear(host_and_url = nil)
           meta_stores.each {|ms| ms.clear(host_and_url) }
