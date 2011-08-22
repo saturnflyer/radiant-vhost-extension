@@ -160,3 +160,54 @@ namespace :db do
     end
   end
 end
+
+# sheets import with vhost, works when sheets moves to a gem
+# issue with load order of rake tasks
+
+namespace :radiant do
+  namespace :extensions do
+    namespace :sheets do
+      namespace :import do
+
+        # Rake::Task["radiant:extensions:sheets:import"].clear #delete old definition
+
+        desc "Creates new sheets pages from old SNS text_assets"
+        task :sns => :environment do
+          class TextAsset < ActiveRecord::Base
+            belongs_to :created_by, :class_name => 'User'
+            belongs_to :updated_by, :class_name => 'User'
+          end
+
+          Site.all.each do |site|
+            %W{StylesheetPage JavascriptPage}.each do |page|
+              unless Page.scoped_by_site_id(site.id).find_by_slug("/").children.first(:conditions => {:class_name => page })
+                p "creating #{page} root for #{site.id}"
+                s = page.constantize.new_with_defaults
+                s.parent_id = Page.scoped_by_site_id(site.id).find_by_slug('/').id
+                s.slug = page == 'StylesheetPage' ? 'css' : 'js'
+                s.site_id = site.id
+                s.save!
+              end
+            end
+          end
+
+          TextAsset.all.each do |ta|
+            klass = (ta.class_name + 'Page').constantize
+            p "Importing #{klass} #{ta.name}"
+            sheet = klass.new_with_defaults
+            sheet.part('body').content = ta.content
+            sheet.part('body').filter_id = ta.filter_id
+            sheet.parent_id = Page.scoped_by_site_id(ta.site_id).find_by_slug("/").children.first(:conditions => {:class_name => klass.to_s }).id if sheet.respond_to?(:site_id)
+            sheet.slug = ta.name
+            ta.attributes.each do |attribute, value|
+              if !attribute.match(/^(lock_version|id|content|filter_id|name|class_name)$/) && sheet.respond_to?("#{attribute}=")
+                sheet.send("#{attribute}=", value)
+              end
+            end
+            sheet.save!
+          end
+        end
+      end
+    end
+  end
+end
