@@ -1,12 +1,12 @@
-Host multiple separate websites on the same Radiant installation each with their 
-own users, pages, snippets and layouts (soon to be supporting other extensions).  
-Administer users and sites from any domain using your administrative accounts 
+Host multiple separate websites on the same Radiant installation each with their
+own users, pages, snippets and layouts (soon to be supporting other extensions).
+Administer users and sites from any domain using your administrative accounts
 and manage website content by logging into each domain.
 
 ## IMPORTANT NOTES ABOUT VHOST
 
 * Not compatible with the multi_site extension
-* Uses the scoped_access plugin, make sure none of your extensions have a 
+* Uses the scoped_access plugin, make sure none of your extensions have a
   conflicting version of the plugin.
 * Hooks into the Radiant 'bootstrap' functionality and currently overwrites the
   standard templates with a modified version of the Simple Blog (i.e. no Styled
@@ -27,6 +27,14 @@ and manage website content by logging into each domain.
     rake radiant:extensions:vhost:update
     rake radiant:extensions:vhost:migrate
 
+## GETTING UP AND RUNNING QUICKLY
+
+    rake radiant:extensions:vhost:apply_site_scoping
+    rake radiant:extensions:vhost:add_default_site
+
+  This scopes Page, Layout, and Snippet by default under a Site with a Hostname of "*".
+
+  User scoping is not performed.  The first user with 'admin' set is set to be a site_admin for the default site.
 
 ## VHOST SUPPORT FOR OTHER EXTENSIONS
 
@@ -40,11 +48,11 @@ Example vhost.yml:
 
     models:
      # Class name
-     ManagedFile: 
+     ManagedFile:
        # Property requiring definition of validates_uniqueness_of
-       filename: 
+       filename:
          # Parameters to pass to validates_uniqueness_of
-         scope: 
+         scope:
            - site_id
          message:
            'file name is already in use'
