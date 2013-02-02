@@ -1,3 +1,5 @@
+require 'ap'
+
 unless defined? RADIANT_ROOT
   ENV["RAILS_ENV"] = "test"
   case

@@ -14,8 +14,8 @@ describe Page, "site scope" do
     @page.site_id = site_id(:site_a)
     @page.valid?
     @page.save
-    puts "ERRORS: "+@page.errors.length.to_s
-    assert_invalid :slug, 'slug already in use for child of parent', 'child', 'child-2', 'child-3'
+    #puts "ERRORS: "+@page.errors.length.to_s
+    assert_invalid :slug, 'this slug is already in use by a sibling of this page', 'child', 'child-2', 'child-3'
     assert_valid :slug, 'child-4'
   end
 

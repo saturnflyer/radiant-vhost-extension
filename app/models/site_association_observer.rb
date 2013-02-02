@@ -1,3 +1,4 @@
+require 'vhost_extension'
 class SiteAssociationObserver < ActiveRecord::Observer
   observe *VhostExtension.MODELS.collect(&:constantize)
   

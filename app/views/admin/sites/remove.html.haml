@@ -9,11 +9,12 @@
   %tbody
     %tr.node.level-1
       %td.site 
-        = @site.title
-        = %{(#{@site.hostnames.map(&:domain).join(', ')})}
+        = image_tag('sites/site.png')
+        = h @site.title + " " + %{(#{@site.hostnames.map(&:domain).join(', ')})}
 
-- form_for [:admin, @site], :html => {:method => :delete} do
+- form_for [:admin, @site], 
+  :html => {:method => :delete, 'data-onsubmit_status'=>"Removing site&#8230;" } do
   %p.buttons
     %input.button{:type=>"submit", :value=>"Delete Site"}/
-    or
-    = link_to 'Cancel', admin_sites_url
+    = t('or')
+    = link_to t('cancel'), admin_sites_url

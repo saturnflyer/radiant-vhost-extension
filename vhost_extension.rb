@@ -3,11 +3,12 @@ require 'yaml'
 require 'ostruct'
 require_dependency 'application_controller'
 require File.join(File.dirname(__FILE__), 'vendor/scoped_access/lib/scoped_access')
+require 'radiant-vhost-extension'
 
 class VhostExtension < Radiant::Extension
   version "#{File.read(File.expand_path(File.dirname(__FILE__)) + '/VERSION')}"
   description "Host multiple sites on a single instance."
-  url "http://github.com/saturnflyer/radiant-vhost-extension"
+  url "http://github.com/krug/radiant-vhost-extension"
 
   # FIXME - Clear up the configuration stuff, it's kinda crufty
   
@@ -30,6 +31,7 @@ class VhostExtension < Radiant::Extension
     init_scoped_access
     enable_caching
     modify_classes
+    add_tags
   end
   
   def deactivate
@@ -37,15 +39,17 @@ class VhostExtension < Radiant::Extension
 
   def self.read_config
     # Enable quick SiteScoping of other Models via vhost.yml config file
+    renv = Rails.env.to_sym
     default_config = YAML.load(ERB.new(File.read(File.dirname(__FILE__) + '/lib/vhost_default_config.yml')).result).symbolize_keys
+    default_config[renv].symbolize_keys!
     begin
       vhost_config_path = RAILS_ROOT + '/config/vhost.yml'
       custom_config = YAML.load(ERB.new(File.read(vhost_config_path)).result).symbolize_keys rescue {}
       default_config[:models].merge!(custom_config[:models]) unless custom_config[:models].blank?
-      default_config[:redirect_to_primary_site] = custom_config[:redirect_to_primary_site] unless custom_config[:redirect_to_primary_site].blank?
+      default_config[renv].merge!(custom_config[renv].symbolize_keys) unless custom_config[renv].blank?
     end
     config = {}
-    config[:redirect_to_primary_site] = default_config[:redirect_to_primary_site]
+    config[:redirect_to_primary_site] = default_config[renv][:redirect_to_primary_site]
     config[:models] = default_config[:models].keys
     config[:model_uniqueness_validations] = default_config[:models].reject{ |model,settings|
       settings["validate_uniqueness_method"] && settings["validate_uniqueness_method"] == "none" }
@@ -56,16 +60,18 @@ class VhostExtension < Radiant::Extension
 
   def basic_extension_config
     tab "Settings" do
-      add_item "Sites", "/admin/sites"
+      add_item "Sites", "/admin/sites", :after => "Users"
     end
-    admin.user.index.add :thead, 'sites_th', :before => 'modify_header'
-    admin.user.index.add :tbody, 'sites_td', :before => 'modify_cell'
     admin.user.edit.add :form, 'admin/users/site_admin_roles', :after => 'edit_roles'
     admin.user.edit.add :form, 'admin/users/edit_sites', :after => 'edit_roles'
+
+    admin.configuration.show.config.clear
+    admin.configuration.show.config << "admin/subscriptions/show"
 
     Radiant::AdminUI.class_eval do
       attr_accessor :sites
     end
+
     # initialize regions for help (which we created above)
     admin.sites = load_default_site_regions
   end
@@ -140,11 +146,14 @@ class VhostExtension < Radiant::Extension
     ApplicationHelper.send :include, Vhost::ApplicationHelperExtensions
     Admin::UsersHelper.send :include, Vhost::AdminUsersHelperExtensions
     Admin::UsersController.send :include, Vhost::AdminUsersControllerExtensions
+    Admin::ConfigurationController.send :include, Vhost::AdminConfigurationControllerExtensions
+    Admin::ExtensionsController.send :include, Vhost::AdminExtensionsControllerExtensions
     # Prevents a user from Site A logging into Site B's admin area (need a spec
     # for this to ensure it's working)
     Admin::ResourceController.send :include, Vhost::ControllerAccessExtensions
     Admin::PagesController.send :include, Vhost::ControllerAccessExtensions 
     ApplicationController.send :include, Vhost::ApplicationControllerExtensions 
+    ActionController.send :include, Vhost::ActionControllerExtensions
   end
 
   # Defines this extension's default regions (so that we can incorporate shards
@@ -161,6 +170,12 @@ class VhostExtension < Radiant::Extension
         new.form.concat %w{edit_title edit_hostname edit_users}
         new.form_bottom.concat %w{edit_buttons}
       end
+    end
+  end
+
+  def add_tags
+    Page.class_eval do
+      include VhostTags
     end
   end
   

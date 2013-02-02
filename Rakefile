@@ -1,20 +1,7 @@
 require 'rake'
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "radiant-vhost-extension"
-    gem.summary = %Q{Vhost Extension for Radiant CMS}
-    gem.description = %Q{Host more than one site in a single instance of Radiant.}
-    gem.email = "jim@saturnflyer.com"
-    gem.homepage = "http://github.com/saturnflyer/radiant-vhost-extension"
-    gem.authors = ["Jason Garber",'Kaleb Walton', 'Jim Gay']
-    gem.add_development_dependency "radiant"
-  end
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. This is only required if you plan to package vhost as a gem."
-end
-
+require 'bundler'
+Bundler::GemHelper.install_tasks
 
 # Determine where the RSpec plugin is by loading the boot
 unless defined? RADIANT_ROOT
