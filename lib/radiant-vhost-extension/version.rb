@@ -1,7 +1,5 @@
 module Radiant
-  module Vhost
-    module Extension
-      VERSION = "0.0.1"
-    end
+  module VhostExtension
+    VERSION = "2.3.2"
   end
 end

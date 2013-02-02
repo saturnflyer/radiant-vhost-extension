@@ -1,12 +1,11 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
 
-require "radiant-vhost-extension"
 require "radiant-vhost-extension/version"
 
 Gem::Specification.new do |s|
   s.name        = "radiant-vhost-extension"
-  s.version     = Radiant::Vhost::Extension::VERSION
+  s.version     = Radiant::VhostExtension::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Jason Garber, Jim Gay, Edmund Haselwanter, Ryan Krug, Wes Gamble"]
   s.email       = ["jim@saturnflyer.com"]

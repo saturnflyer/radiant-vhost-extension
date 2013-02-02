@@ -6,7 +6,7 @@ require File.join(File.dirname(__FILE__), 'vendor/scoped_access/lib/scoped_acces
 require 'radiant-vhost-extension'
 
 class VhostExtension < Radiant::Extension
-  version "#{File.read(File.expand_path(File.dirname(__FILE__)) + '/VERSION')}"
+  version Radiant::VhostExtension::VERSION
   description "Host multiple sites on a single instance."
   url "http://github.com/saturnflyer/radiant-vhost-extension"
 
