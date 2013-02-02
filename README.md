@@ -27,6 +27,14 @@ and manage website content by logging into each domain.
     rake radiant:extensions:vhost:update
     rake radiant:extensions:vhost:migrate
 
+## GETTING UP AND RUNNING QUICKLY
+
+    rake radiant:extensions:vhost:apply_site_scoping
+    rake radiant:extensions:vhost:add_default_site
+    
+  This scopes Page, Layout, and Snippet by default under a Site with a Hostname of "*".  
+  
+  User scoping is not performed.  The first user with 'admin' set is set to be a site_admin for the default site.
 
 ## VHOST SUPPORT FOR OTHER EXTENSIONS
 
