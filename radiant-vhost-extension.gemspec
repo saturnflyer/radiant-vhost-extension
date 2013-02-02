@@ -8,11 +8,11 @@ Gem::Specification.new do |s|
   s.name        = "radiant-vhost-extension"
   s.version     = Radiant::Vhost::Extension::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
+  s.authors     = ["Jason Garber, Jim Gay, Edmund Haselwanter, Ryan Krug, Wes Gamble"]
+  s.email       = ["jim@saturnflyer.com"]
   s.homepage    = "http://rubygems.org/gems/radiant-vhost-extension"
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Host multiple sites in Radiant CMS}
+  s.description = %q{Host multiple sites in Radiant CMS}
 
   s.rubyforge_project = "radiant-vhost-extension"
 
