@@ -7,6 +7,7 @@ then
 fi
 cp -r ~/builds/*/radiant-vhost-extension vendor/extensions/vhost
 gem install bundler --pre
+echo 'gem "rake"' >> Gemfile
 echo 'gem "radiant-vhost-extension", :path => "vendor/extensions/help"' >> Gemfile
 bundle install
 
