@@ -1,2 +1,3 @@
 cd ~/radiant
-bundle exec rake spec:extensions EXT=vhost
+pwd
+bundle exec rake spec:extensions EXT=vhost --trace
