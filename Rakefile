@@ -1,8 +1,3 @@
-require 'rake'
-
-require 'bundler'
-Bundler::GemHelper.install_tasks
-
 # Determine where the RSpec plugin is by loading the boot
 unless defined? RADIANT_ROOT
   ENV["RAILS_ENV"] = "test"
@@ -16,22 +11,22 @@ unless defined? RADIANT_ROOT
   end
 end
 
-require 'rake/rdoctask'
+require 'rake'
+require 'rdoc/task'
 require 'rake/testtask'
 
-if defined? RADIANT_ROOT
-  rspec_base = File.expand_path(RADIANT_ROOT + '/vendor/plugins/rspec/lib')
-  $LOAD_PATH.unshift(rspec_base) if File.exist?(rspec_base)
-end
-
+rspec_base = File.expand_path(RADIANT_ROOT + '/vendor/plugins/rspec/lib')
+$LOAD_PATH.unshift(rspec_base) if File.exist?(rspec_base)
 require 'spec/rake/spectask'
+require 'cucumber'
+require 'cucumber/rake/task'
 
 # Cleanup the RADIANT_ROOT constant so specs will load the environment
 Object.send(:remove_const, :RADIANT_ROOT)
 
 extension_root = File.expand_path(File.dirname(__FILE__))
 
-task :default => :spec
+task :default => [:spec, :features]
 task :stats => "spec:statsetup"
 
 desc "Run all specs in spec directory"
@@ -39,6 +34,8 @@ Spec::Rake::SpecTask.new(:spec) do |t|
   t.spec_opts = ['--options', "\"#{extension_root}/spec/spec.opts\""]
   t.spec_files = FileList['spec/**/*_spec.rb']
 end
+
+task :features => 'spec:integration'
 
 namespace :spec do
   desc "Run all specs in spec directory with RCov"
@@ -48,7 +45,7 @@ namespace :spec do
     t.rcov = true
     t.rcov_opts = ['--exclude', 'spec', '--rails']
   end
-  
+
   desc "Print Specdoc for all specs"
   Spec::Rake::SpecTask.new(:doc) do |t|
     t.spec_opts = ["--format", "specdoc", "--dry-run"]
@@ -61,6 +58,14 @@ namespace :spec do
       t.spec_opts = ['--options', "\"#{extension_root}/spec/spec.opts\""]
       t.spec_files = FileList["spec/#{sub}/**/*_spec.rb"]
     end
+  end
+
+  desc "Run the Cucumber features"
+  Cucumber::Rake::Task.new(:integration) do |t|
+    t.fork = true
+    t.cucumber_opts = ['--format', (ENV['CUCUMBER_FORMAT'] || 'pretty')]
+    # t.feature_pattern = "#{extension_root}/features/**/*.feature"
+    t.profile = "default"
   end
 
   # Setup specs for stats
@@ -92,20 +97,12 @@ namespace :spec do
 end
 
 desc 'Generate documentation for the vhost extension.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
+RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'VhostExtension'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
-end
-
-# For extensions that are in transition
-desc 'Test the vhost extension.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
 end
 
 # Load any custom rakefiles for extension
